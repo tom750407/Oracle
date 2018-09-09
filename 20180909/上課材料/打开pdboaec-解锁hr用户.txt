@@ -1,0 +1,140 @@
+[oracle@oaec admin]$ lsnrctl status
+
+LSNRCTL for Linux: Version 12.1.0.2.0 - Production on 09-9月 -2018 11:52:38
+
+Copyright (c) 1991, 2014, Oracle.  All rights reserved.
+
+正在连接到 (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=oaec)(PORT=1521)))
+LISTENER 的 STATUS
+------------------------
+别名                      LISTENER
+版本                      TNSLSNR for Linux: Version 12.1.0.2.0 - Production
+启动日期                  17-8月 -2018 17:44:26
+正常运行时间              22 天 18 小时 8 分 12 秒
+跟踪级别                  off
+安全性                    ON: Local OS Authentication
+SNMP                      OFF
+监听程序参数文件          /u01/app/oracle/product/12.1.0/db_1/network/admin/listener.ora
+监听程序日志文件          /u01/app/oracle/diag/tnslsnr/oaec/listener/alert/log.xml
+监听端点概要...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=oaec)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=EXTPROC1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=oaec)(PORT=8080))(Presentation=HTTP)(Session=RAW))
+服务摘要..
+服务 "PDBOAECHR.HWUA.COM" 包含 1 个实例。
+  实例 "oaec", 状态 READY, 包含此服务的 1 个处理程序...
+服务 "oaec.hwua.com" 包含 1 个实例。
+  实例 "oaec", 状态 READY, 包含此服务的 1 个处理程序...
+服务 "oaecXDB.hwua.com" 包含 1 个实例。
+  实例 "oaec", 状态 READY, 包含此服务的 1 个处理程序...
+服务 "pdboaec.hwua.com" 包含 1 个实例。
+  实例 "oaec", 状态 READY, 包含此服务的 1 个处理程序...
+命令执行成功
+
+[oracle@oaec bin]$ ps -ef |grep ora_
+oracle     2312      1  0 11:45 ?        00:00:00 ora_pmon_oaec
+oracle     2315      1  0 11:45 ?        00:00:04 ora_psp0_oaec
+oracle     2317      1  2 11:45 ?        00:02:37 ora_vktm_oaec
+oracle     2321      1  0 11:45 ?        00:00:00 ora_gen0_oaec
+oracle     2323      1  0 11:45 ?        00:00:01 ora_mman_oaec
+oracle     2327      1  0 11:45 ?        00:00:00 ora_diag_oaec
+oracle     2329      1  0 11:45 ?        00:00:04 ora_dbrm_oaec
+oracle     2331      1  0 11:45 ?        00:00:14 ora_vkrm_oaec
+oracle     2333      1  0 11:45 ?        00:00:07 ora_dia0_oaec
+oracle     2335      1  0 11:45 ?        00:00:04 ora_dbw0_oaec
+oracle     2337      1  0 11:45 ?        00:00:03 ora_lgwr_oaec
+oracle     2339      1  0 11:45 ?        00:00:05 ora_ckpt_oaec
+oracle     2341      1  0 11:45 ?        00:00:01 ora_lg00_oaec
+oracle     2343      1  0 11:45 ?        00:00:00 ora_smon_oaec
+oracle     2345      1  0 11:45 ?        00:00:00 ora_lg01_oaec
+oracle     2347      1  0 11:45 ?        00:00:00 ora_reco_oaec
+oracle     2349      1  0 11:45 ?        00:00:00 ora_lreg_oaec
+oracle     2351      1  0 11:45 ?        00:00:00 ora_pxmn_oaec
+oracle     2353      1  0 11:45 ?        00:00:09 ora_mmon_oaec
+oracle     2355      1  0 11:45 ?        00:00:07 ora_mmnl_oaec
+oracle     2357      1  0 11:45 ?        00:00:00 ora_d000_oaec
+oracle     2359      1  0 11:45 ?        00:00:00 ora_s000_oaec
+oracle     2371      1  0 11:45 ?        00:00:03 ora_p000_oaec
+oracle     2373      1  0 11:45 ?        00:00:01 ora_p001_oaec
+oracle     2375      1  0 11:45 ?        00:00:00 ora_tmon_oaec
+oracle     2377      1  0 11:45 ?        00:00:01 ora_tt00_oaec
+oracle     2379      1  0 11:45 ?        00:00:00 ora_smco_oaec
+oracle     2381      1  0 11:45 ?        00:00:00 ora_w000_oaec
+oracle     2383      1  0 11:45 ?        00:00:00 ora_w001_oaec
+oracle     2386      1  0 11:45 ?        00:00:00 ora_aqpc_oaec
+oracle     2390      1  0 11:45 ?        00:00:16 ora_p002_oaec
+oracle     2392      1  0 11:45 ?        00:00:03 ora_p003_oaec
+oracle     2394      1  0 11:45 ?        00:00:08 ora_p004_oaec
+oracle     2396      1  0 11:45 ?        00:00:02 ora_p005_oaec
+oracle     2398      1  0 11:45 ?        00:00:02 ora_p006_oaec
+oracle     2400      1  0 11:45 ?        00:00:03 ora_p007_oaec
+oracle     2403      1  0 11:45 ?        00:00:00 ora_qm02_oaec
+oracle     2409      1  0 11:45 ?        00:00:00 ora_q003_oaec
+oracle     2413      1  0 11:45 ?        00:00:09 ora_cjq0_oaec
+oracle     3958      1  0 12:08 ?        00:00:00 ora_w002_oaec
+oracle     3960      1  0 12:09 ?        00:00:00 ora_w003_oaec
+oracle     3962      1  0 12:09 ?        00:00:00 ora_w004_oaec
+oracle     3966      1  0 12:09 ?        00:00:00 ora_w005_oaec
+oracle     3968      1  0 12:09 ?        00:00:00 ora_w006_oaec
+oracle     3976      1  0 12:10 ?        00:00:00 ora_w007_oaec
+oracle     7844      1  0 13:36 ?        00:00:00 ora_q002_oaec
+oracle     8004      1  0 13:49 ?        00:00:00 ora_j000_oaec
+oracle     8006      1  0 13:49 ?        00:00:00 ora_j001_oaec
+oracle     8012   7904  0 13:50 pts/2    00:00:00 grep ora_
+
+
+[oracle@oaec admin]$ sqlplus / as sysdba
+
+SQL*Plus: Release 12.1.0.2.0 Production on 星期日 9月 9 11:32:40 2018
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+
+连接到: 
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+
+SQL> show pdbs
+
+    CON_ID CON_NAME			  OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+	 2 PDB$SEED			  READ ONLY  NO
+	 3 PDBOAEC			  MOUNT
+	 
+SQL> alter pluggable database pdboaec open;
+
+
+
+SQL> show pdbs
+
+    CON_ID CON_NAME			  OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+	 2 PDB$SEED			  READ ONLY  NO
+	 3 PDBOAEC			  READ WRITE NO
+SQL> show con_name
+
+CON_NAME
+------------------------------
+CDB$ROOT
+SQL> alter session set container=pdboaec;
+
+会话已更改。
+
+SQL> show user
+USER 为 "SYS"
+SQL> show con_name
+
+CON_NAME
+------------------------------
+PDBOAEC
+SQL> alter user hr account unlock;
+
+用户已更改。
+
+SQL> alter user hr identified by hr account unlock;
+
+用户已更改。
+
+SQL> exit
+
+
