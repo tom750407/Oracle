@@ -1,0 +1,82 @@
+Linux 基础练习题、面试题
+
+1、如何更改linux主机名？
+编辑配置文件 /etc/sysconfig/network    
+更改HOSTSNAME，保存退出后重启生效；
+[root@yonglinux ~]# cat /etc/sysconfig/network
+NETWORKING=yes
+HOSTNAME=yonglinux.com
+
+2、登录linux，我们除了使用密码验证，还可以使用哪种方式？简述配置过程。
+使用密钥加密登录，客户端生成公钥和私钥，客户端保存私钥，公钥复制到远程linux主机，登录时使用密钥加密登录；
+在linux主机执行下面的操作：
+mkdir /root/.ssh
+chmod  700 /root/.ssh
+vi /root/.ssh/authorized_keys    粘贴复制的公钥，保存退出；
+chmod 600 /root/.ssh/authorized_keys
+
+vi /etc/selinux/config    编辑selinux防火墙配置
+更改 SELINUX=disabled    永久关闭selinux；
+iptables -F    清空防火墙规则；
+/etc/init.d/iptables save    保存防火墙设置；
+客户端使用密钥登录；
+
+3、如何给grub加密码（明文、密文)，密文加密又分成哪几种？        
+明文加密 vi /etc/grub.conf 
+hiddenmenu下增加一行
+password=123456
+保存退出，重启系统进入菜单选择，按p输入密码才可以编辑；
+
+密文加密分md5加密和sha加密
+md5加密命令为：grub-md5-crypt 
+输入密码，生成一串加密后的密码，复制密码
+vi  /etc/grub.conf
+password --md5 粘贴密码
+保存退出，重启系统进入菜单，按p输入密码；
+
+sha加密命令：grub-crypt --sha-256
+输入密码，生成一串密码，复制密码
+编辑/etc/grub.conf
+password --encrypted 粘贴密码，
+保存退出，重启进入系统，按p输入密码；
+
+4、如何用yum安装/删除一个软件包？如何查看某个软件包是否已经安装
+安装：yum install -y tree
+删除：yum remove -y tree
+查看：rpm -qa | grep “包名” 或    rpm -q 包名
+
+5、如何查看系统版本？（3个方法）
+cat /etc/CentOS-release
+cat /etc/issue
+rpm -qa | grep release
+
+6、find 找出 当前目录下的 目录和普通文件？ 找出当前目录下10天没有改变，大小大于4K的普通文件或目录
+find ./ -type d  -o -type f
+find ./ -type d -o -type f -size +4k ! -mtime -10
+
+7、在当前目录下创建一个名字为1的目录 的命令？  创建级联目录 ./2/3/的命令？ 一条命令创建级联目录 ./1/2/3和./1/2/4?
+
+mkdir ./1
+mkdir -p ./2/3
+mkdir -p ./1/2/{3,4}
+
+8、cp一个目录中的文件需要什么权限，mv呢？touch呢？rm呢？
+cp需要有目录的x权限，mv需要wx权限，touch需要wx权限，rm需要有wx权限；
+
+9、用cat如何向文件里重定向字符串
+ 第一种方法：
+ [user1@localhost tmp]$ cat >>1.txt
+000000000000
+111111111111
+222222222222
+最后按ctrl + d       
+
+第二种方法：
+cat >>1.txt<<EOF  (以EOF为结束符，可以换成别的如abc)
+> 000000000000
+> qqqqqqqqqqqqq
+>EOF(这个结束)
+
+10、建立一个公共目录/opt/public,要求每个用户都可以创建文件和目录，但只能自己本人和root可以删除；
+mkdir /opt/public
+chmod 1777 /opt/public
