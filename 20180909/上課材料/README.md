@@ -5,7 +5,7 @@
 1.判斷下面的 SELECT 語句是是否能執行成功
 SELECT last_name,job,salary as Sal FROM employees;
 
-`testing` this markdown `file`
+- 不能成功,因為employees表內沒有job這一列
 
 2.判斷下面的 SELECT 語句是否能執行成功
 SELECT * FROM job_grades;
