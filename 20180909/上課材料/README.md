@@ -10,7 +10,7 @@ SELECT last_name,job,salary as Sal FROM employees;
 2.判斷下面的 SELECT 語句是否能執行成功
 SELECT * FROM job_grades;
 
-
++ 不能成功,因為沒有job_grades這張表
 
 3.下面語句中，有幾處錯誤
 SELECT employee_id,last_name,
