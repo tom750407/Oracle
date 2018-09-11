@@ -5,7 +5,7 @@
 1.判斷下面的 SELECT 語句是是否能執行成功
 SELECT last_name,job,salary as Sal FROM employees;
 
-<font color=#00ffff size=72>color=#00ffff</font>
+<font color=#00ffff size=20>color=#00ffff</font>
 
 2.判斷下面的 SELECT 語句是否能執行成功
 SELECT * FROM job_grades;
