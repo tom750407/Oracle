@@ -6,16 +6,37 @@
 - **SELECT** last_name, department_id **FROM** employees **WHERE** employee_id = 176;
 ---
 ### 3.顯示工資不在5000至12000範圍內的所有員工的姓氏和工資。
-- **SELECT** last_name, salary **FROM** employees **WHERE** salary NOT **BETWEEN** 5000 AND 12000;
+- **SELECT** last_name, salary **FROM** employees **WHERE** salary NOT BETWEEN 5000 AND 12000;
 ---
 ### 4.顯示在2003年2月20日至2007年5月1日之間錄用的員工姓氏、職務和錄用日期，並按錄用日期進行升序排序。
 - 時間的預設格式是DD-MON-YY,根據語言的不同MON輸入的格式不同,這裡使用英文的月份的前三個字母.另一個方式是用TO_DATE改變時間格式
-	- **SELECT** last_name, job_id, hire_date **FROM** employees **WHERE** hire_date **BETWEEN** TO_DATE('2003/02/20', 'YYYY/MM/DD') AND TO_DATE('2007/05/01', 'YYYY/MM/DD') **ORDER BY** hire_date ASC;
-	- **SELECT** last_name, job_id, hire_date **FROM** employees **WHERE** hire_date **BETWEEN** '20-FEB-2003' AND '01-MAY-2007' **ORDER BY** hire_date ASC;
+	- **SELECT** last_name, job_id, hire_date **FROM** employees **WHERE** hire_date BETWEEN TO_DATE('2003/02/20', 'YYYY/MM/DD') AND TO_DATE('2007/05/01', 'YYYY/MM/DD') **ORDER BY** hire_date ASC;
+	- **SELECT** last_name, job_id, hire_date **FROM** employees **WHERE** hire_date BETWEEN '20-FEB-2003' AND '01-MAY-2007' **ORDER BY** hire_date ASC;
 ---
 ### 5.按姓名的字母順序顯示部門20和部門90的所有員式的姓氏和部門編號。
-
+- **SELECT** last_name, department_id **FROM** employees **WHERE** department_id = 20 OR department_id = 90 **ORDER BY** last_name;
 ---
 ### 6.列出工資在5000到12000之間，並且部門是20或者50的員工姓氏和工資，分別將列標記為“Employee”和“Monthly Salary”。
+- **SELECT** last_name "Employee", salary "Monthly Salary" **FROM** employees **WHERE** (salary BETWEEN 5000 AND 12000) AND (department_id = 20 OR department_id = 50); 
+---
+### 7.顯示在2004年錄用的每位員工的姓氏和錄用日期
+- 顯示某一年或者多年內可以用BETWEEN將兩個日期作為條件,或者使用extract()這個函數
+	- **SELECT** last_name, hire_date **FROM** employees **WHERE** extract (YEAR from hire_date) = 2004;
+	- **SELECT** last_name, hire_date **FROM** employees **WHERE** hire_date BETWEEN '01-JAN-2004' AND '31-DEC-2004';
+---
+### 8.顯示沒有經理的所有員工的姓氏和職稱
 
 ---
+### 9.顯示有獎金可拿的所有員工的姓氏、工資和獎金提成比率，並按工資和獎金提成比率進行降序排序。
+
+---
+### 10.顯示員工姓氏中第三個字母為“a”的所有員工的姓名和姓氏。
+
+---
+### 11.顯示員工姓氏中有“a”和“e”的所有員工的姓氏和姓名。
+
+---
+### 12.顯示職務為sa_rep和st_clerk，且工資不等於2500，3500和7000的所有員工的姓氏，姓名、職務和工資。
+
+---
+### 13.顯示獎金提成為20%的所有員工的姓氏、姓名、工資和獎金。
