@@ -16,11 +16,11 @@
 	- 再來就是alias如果是多個單字要加雙引號
 ---
 ### 4.顯示DEPARTMENTS的表結構，並從該表中選擇所有的數據
-- 在command window中輸入DESC departments
+- 在command window中輸入**DESC** departments
 - 在sql window中輸入**SELECT** * **FROM** departments;
 ---
 ### 5.顯示EMPLOYEES的表結構，並創建一個查詢，顯示每位員工的姓氏、職務代碼、聘用日期和員工編號，並且首先顯示員工編號，為HIRE_DATE提供一個列別名STARTDATE。
-- 在command window中輸入DESC employees
+- 在command window中輸入**DESC** employees
 - 在sql window中輸入**SELECT** employee_id, first_name, job_id, hire_date startdate From employees;
 ---
 ### 6.執行第5題中的腳本
