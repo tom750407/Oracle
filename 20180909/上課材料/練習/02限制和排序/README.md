@@ -34,7 +34,7 @@
 - **SELECT** first_name, last_name **FROM** employees **WHERE** last_name LIKE '__a%';
 ---
 ### 11.顯示員工姓氏中有“a”和“e”的所有員工的姓氏和姓名。
-**SELECT** first_name, last_name **FROM** employees **WHERE** last_name LIKE '%a%' AND last_name LIKE '%e%';
+- **SELECT** first_name, last_name **FROM** employees **WHERE** last_name LIKE '%a%' AND last_name LIKE '%e%';
 ---
 ### 12.顯示職務為sa_rep和st_clerk，且工資不等於2500，3500和7000的所有員工的姓氏，姓名、職務和工資。
 
