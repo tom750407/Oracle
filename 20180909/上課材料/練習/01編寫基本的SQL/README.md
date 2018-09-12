@@ -26,6 +26,7 @@
 ---
 ### 6.執行第5題中的腳本
 <img src="https://github.com/tom750407/Oracle/blob/master/20180909/%E4%B8%8A%E8%AA%B2%E6%9D%90%E6%96%99/src/lab1_5.sql%E5%9F%B7%E8%A1%8C%E7%B5%90%E6%9E%9C.png" width="500px">
+
 ---
 ### 7.創建一個查詢，以顯示EMPLOYEES表中唯一的職務代碼。
 - SELECT DISTINCT job_id FROM employees;
