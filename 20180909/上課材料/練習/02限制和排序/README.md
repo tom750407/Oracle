@@ -37,7 +37,7 @@
 - **SELECT** last_name, first_name **FROM** employees **WHERE** last_name LIKE '%a%' AND last_name LIKE '%e%';
 ---
 ### 12.顯示職務為sa_rep和st_clerk,且工資不等於2500,3500和7000的所有員工的姓氏,姓名、職務和工資
-- 當有多個條件的時候可以使用IN或NOT IN可以少寫很多
+- 當有多個條件的時候可以使用IN或NOT IN這樣可以少寫很多,效能也會好很多
 	- **SELECT** last_name, first_name, job_id, salary **FROM** employees **WHERE** (job_id = UPPER('sa_rep') OR job_id = UPPER('st_clerk')) AND (salary != 2500 AND salary != 3500 AND salary != 7000);
 	- **SELECT** last_name, first_name, job_id, salary **FROM** employees **WHERE** salary NOT IN (2500,3500,7000) AND job_id IN('SA_REP','ST_CLERK');
 ---
