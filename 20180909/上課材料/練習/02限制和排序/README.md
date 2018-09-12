@@ -25,13 +25,13 @@
 	- **SELECT** last_name, hire_date **FROM** employees **WHERE** hire_date BETWEEN '01-JAN-2004' AND '31-DEC-2004';
 ---
 ### 8.顯示沒有經理的所有員工的姓氏和職稱
-
+- **SELECT** last_name, job_id **FROM** employees **WHERE** manager_id IS NULL;
 ---
 ### 9.顯示有獎金可拿的所有員工的姓氏、工資和獎金提成比率，並按工資和獎金提成比率進行降序排序。
-
+- **SELECT** last_name, salary, commission_pct **FROM** employees **WHERE** commission_pct IS NOT NULL **ORDER BY** salary, commission_pct DESC;
 ---
 ### 10.顯示員工姓氏中第三個字母為“a”的所有員工的姓名和姓氏。
-
+- **SELECT** first_name, last_name **FROM** employees **WHERE** last_name LIKE '__a%';
 ---
 ### 11.顯示員工姓氏中有“a”和“e”的所有員工的姓氏和姓名。
 
