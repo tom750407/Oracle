@@ -1,17 +1,16 @@
 # 1-編寫基本的SQL
-### 1.判斷下面的 **SELECT** 語句是是否能執行成功
-### **SELECT** last_name, job, salary as Sal **FROM** employees;
+### 1.判斷下面的SELECT語句是是否能執行成功
+### SELECT last_name, job, salary as Sal FROM employees;
 - 不能成功
         - 因為employees表內沒有job這一列
 ---
-### 2.判斷下面的 **SELECT** 語句是否能執行成功
-### **SELECT** * **FROM** job_grades;
+### 2.判斷下面的SELECT語句是否能執行成功
+### SELECT * FROM job_grades;
 - 不能成功
         - 因為沒有job_grades這張表
 ---
 ### 3.下面語句中，有幾處錯誤
-### **SELECT** employee_id, last_name, sal x 12 ANNUAL SALARY
-### **FROM** employees;
+### SELECT employee_id, last_name, sal x 12 ANNUAL SALARY FROM employees;
 - 2處錯誤
 	- 首先是employees表內沒有sal這一列,所以sal x 12會報錯
 	- 再來就是alias如果是多個單字要加雙引號
