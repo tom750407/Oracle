@@ -19,3 +19,18 @@
 ---
 ### 7.確定經理的人數而不列出他們，將該列標記為Number of Managers。
 - **SELECT** COUNT(DISTINCT manager_id) "Number of Managers" **FROM** employees;
+---
+### 8.編寫一個查詢，顯示最高工資和最低工資之間的差額，將該列標記為DIFFERENCE。
+- **SELECT** MAX(salary) maximum, Min(salary) minimum, MAX(salary) - MIN(salary) difference **FROM** employees;
+---
+### 9.顯示經理編號以及該經理所管員工的最低工資，不包括其經理未知的任何員工。排除最低工資不超過6000的所有組。按工資降序進行排序。
+- **SELECT** manager_id, MIN(salary) min_salary **FROM** employees **WHERE** manager_id IS NOT NULL **GROUP BY** manager_id **HAVING** MIN(salary) > 6000 **ORDER BY** min_salary DESC;
+---
+### 10.編寫一個查詢，顯示每個部門編號，部門員工人數，和該部門的平均工資。將各列命令為Deptno、Number of People、Avg of Salary。平均工資舍入到小數後兩位，排除掉未知部門，結果按部門編號進行排序。
+- **SELECT** department_id "Deptno", COUNT(*) "Number of People", TRUNC(AVG(salary), 2) "Avg of Salary" **FROM** employees **WHERE** department_id IS NOT NULL **GROUP BY** department_id **ORDER BY** 1;
+---
+### 11.創建一個查詢，顯示員工總數，以及其中在2003、2005、2006年入職的員工數。為每列創建標題為Total、2003、2005、2006。例如輸出如下：
+| TOTAL | 2003 | 2005 | 2007 |
+| ----- | ---- | ---- | ---- |
+| 107   | 6    | 29   | 19   |
+
