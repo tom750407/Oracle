@@ -24,11 +24,28 @@
 ---
 ### 5.顯示每位員工的姓氏，併計算今天和員工入職日期之間的月數。將該列命名為MONTHS_WORKED。按入職的月數進行排序。輸出結果要求是進行四捨五入後的整數結果。
 - ROUND()後面接一個數字,四捨五入後給出整數
-- months_between(first_date, second_date)用來算出兩個日期中間差了多少個月
-	- **SELECT** last_name, ROUND((SYSDATE - hire_date) / 31) month_worked **FROM** employees **ORDER BY** hire_date;
-	- **SELECT** last_name, ROUND(months_between(SYSDATE, hire_date)) month_worked **FROM** employees **ORDER BY** hire_date;
+- MONTHS_BETWEEN(first_date, second_date)用來算出兩個日期中間差了多少個月
+	- **SELECT** last_name, ROUND((SYSDATE - hire_date) / 30.5) month_worked **FROM** employees **ORDER BY** hire_date;
+	- **SELECT** last_name, ROUND(MONTHS_BETWEEN(SYSDATE, hire_date)) month_worked **FROM** employees **ORDER BY** hire_date;
 ---
 ### 6.編寫一個查詢，為每個員工產生如下內容
 ### <員工姓氏> 現在的薪水是 <工資> 每月 他期望他能拿到每月<3倍工資>。將該列命名為 Dream Salaries。例如：
 ### King 現在的薪水是 $24,000.00 每月 他期望他能拿到每月$72,000.00。
 - **SELECT** last_name || ' earn ' || to_char(salary, '$99,999.00') || ' per month, and he/she expects to earn $' || to_char(salary * 3, '$99,999.00') || ' as his/her dream salaries' "Dream Salaries" **FROM** employees;
+### 7.創建一個查詢，顯示所有員工的姓氏和薪金。要求，姓氏要大寫，將薪金格式規定為15個字符長，左邊填充$，將該列命名為SALARY例如：
+### KING $$$$$$$$$$24000
+- **SELECT** UPPER(last_name) || ' ' || LPAD(salary * (NVL(commission_pct, 0) + 1), 15, '$') **FROM** employees
+---
+### 8.顯示每位員工的姓氏、入職日期和薪金復核日期，薪金復核日期是入職六個月的第一個星期一進行。將該列命名為REVIEW。規定這一日期格式，使其顯示樣式類似於”Monday,the Thirty-First of July,2000”。
+- **SELECT** last_name, hire_date, TO_CHAR(NEXT_DAY(ADD_MONTHS(hire_date,6),'MONDAY'), 'fmDay, "the" Ddspth "of" Month, YYYY') review **FROM** employees;
+---
+### 9.顯示員工的姓氏、入職日期和該員工是在星期幾開始工作的。將該列命名為DAY。按星期中各天的順序（從星期一開始）將結果排序。
+- **SELECT** last_name, hire_date, TO_CHAR(hire_date, 'DAY') day **FROM** employees **ORDER BY** TO_CHAR(hire_date -1, 'D');
+- **SELECT** last_name, hire_date, TO_CHAR(hire_date, 'DAY') day **FROM** employees **ORDER BY** CASE TO_CHAR(hire_date, 'fmDAY') WHEN 'MONDAY' THEN 1 WHEN 'TUESDAY' THEN 2 WHEN 'WEDNESDAY' THEN 3 WHEN 'THURSDAY' THEN 4 WHEN 'FRIDAY' THEN 5 WHEN 'SATURDAY' THEN 6 WHEN 'SUNDAY' THEN 7 END;
+---
+### 10.創建一個查詢，使其顯示員工的姓氏和獎金比率。如果某員工沒有資金，則顯示“No Commission”，將該列命名為COMM。
+- **SELECT** last_name, NVL(TO_CHAR(commission_pct,'0.00'), 'No commission') comm **FROM** employees;
+---
+### 11.創建一個查詢，使其顯示員工的姓氏，並用星號指明他們的年薪。每個星號代表一千元，有幾千就有幾個星號，取整，不足一千的不參與統計。按薪金降序排序。將該列命名為EMPLOYEES_AND_THEIR_SALARIES。 類似：
+### King************
+- **SELECT** RPAD(last_name, LENGTH(last_name) + TRUNC(salary * (NVL(commission_pct, 0) + 1) / 1000), '*') employees_and_their_salaries **FROM** employees;
