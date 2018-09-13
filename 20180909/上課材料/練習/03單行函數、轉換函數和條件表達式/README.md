@@ -28,10 +28,10 @@
 	- **SELECT** last_name, ROUND((SYSDATE - hire_date) / 30.5) month_worked **FROM** employees **ORDER BY** hire_date;
 	- **SELECT** last_name, ROUND(MONTHS_BETWEEN(SYSDATE, hire_date)) month_worked **FROM** employees **ORDER BY** hire_date;
 ---
-### 6.編寫一個查詢，為每個員工產生如下內容
-### <員工姓氏> 現在的薪水是 <工資> 每月 他期望他能拿到每月<3倍工資>。將該列命名為 Dream Salaries。例如：
+### 6.編寫一個查詢，顯示<員工姓氏> 現在的薪水是 <工資> 每月 他期望他能拿到每月<3倍工資>。將該列命名為 Dream Salaries。例如：
 ### King 現在的薪水是 $24,000.00 每月 他期望他能拿到每月$72,000.00。
 - **SELECT** last_name || ' earn ' || to_char(salary, '$99,999.00') || ' per month, and he/she expects to earn $' || to_char(salary * 3, '$99,999.00') || ' as his/her dream salaries' "Dream Salaries" **FROM** employees;
+---
 ### 7.創建一個查詢，顯示所有員工的姓氏和薪金。要求，姓氏要大寫，將薪金格式規定為15個字符長，左邊填充$，將該列命名為SALARY例如：
 ### KING $$$$$$$$$$24000
 - **SELECT** UPPER(last_name) || ' ' || LPAD(salary * (NVL(commission_pct, 0) + 1), 15, '$') **FROM** employees
@@ -49,3 +49,16 @@
 ### 11.創建一個查詢，使其顯示員工的姓氏，並用星號指明他們的年薪。每個星號代表一千元，有幾千就有幾個星號，取整，不足一千的不參與統計。按薪金降序排序。將該列命名為EMPLOYEES_AND_THEIR_SALARIES。 類似：
 ### King************
 - **SELECT** RPAD(last_name, LENGTH(last_name) + TRUNC(salary * (NVL(commission_pct, 0) + 1) / 1000), '*') employees_and_their_salaries **FROM** employees;
+---
+### 12.使用DECODE函數編寫一個查詢，使其按照以下數據根據JOB_ID列的值顯示所有員工的級別：
+|職務(Job) | 級別(Grade)|
+|--------- | -----------|
+|AD_PRES   | A          |
+|ST_MAN    | B          |
+|IT_PROG   | C          |
+|SA_REP    | D          |
+|ST_CLERK  | E          |
+|OTHER     | O          |
+
+---
+### 13.用CASE語法，實現上題的要求。
