@@ -59,7 +59,7 @@
 |SA_REP    | D          |
 |ST_CLERK  | E          |
 |OTHER     | O          |
-- **SELECT** last_name, job_id "Job", DECODE ((job_id), 'AD_PRES','A', 'ST_MAN','B', 'IT_PROG','C', 'SA_REP','D', 'ST_CLERK','E', 'O') "Grade" **FROM** employees;
+- **SELECT** last_name, job_id "Job", DECODE ((job_id), 'AD_PRES', 'A', 'ST_MAN', 'B', 'IT_PROG', 'C', 'SA_REP', 'D', 'ST_CLERK', 'E', 'O') "Grade" **FROM** employees;
 ---
 ### 13.用CASE語法，實現上題的要求。
 - **SELECT** last_name, job_id "Job", (CASE job_id WHEN 'AD_PRES' THEN 'A' WHEN 'ST_MAN' THEN 'B' WHEN 'IT_PROG' THEN 'C' WHEN 'SA_REP' THEN 'D' WHEN 'ST_CLERK' THEN 'E' ELSE 'O' END) "Grade" **FROM** employees;
