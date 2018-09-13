@@ -51,14 +51,15 @@
 - **SELECT** RPAD(last_name, LENGTH(last_name) + TRUNC(salary * (NVL(commission_pct, 0) + 1) / 1000), '*') employees_and_their_salaries **FROM** employees;
 ---
 ### 12.使用DECODE函數編寫一個查詢，使其按照以下數據根據JOB_ID列的值顯示所有員工的級別：
-#### |職務(Job) | 級別(Grade)|
-#### |--------- | -----------|
-#### |AD_PRES   | A          |
-#### |ST_MAN    | B          |
+|職務(Job) | 級別(Grade)|
+|--------- | -----------|
+|AD_PRES   | A          |
+|ST_MAN    | B          |
 |IT_PROG   | C          |
 |SA_REP    | D          |
 |ST_CLERK  | E          |
 |OTHER     | O          |
-
+- **SELECT** last_name, job_id "Job", DECODE ((job_id), 'AD_PRES','A', 'ST_MAN','B', 'IT_PROG','C', 'SA_REP','D', 'ST_CLERK','E', 'O') "Grade" **FROM** employees;
 ---
 ### 13.用CASE語法，實現上題的要求。
+- **SELECT** last_name, job_id "Job", (CASE job_id WHEN 'AD_PRES' THEN 'A' WHEN 'ST_MAN' THEN 'B' WHEN 'IT_PROG' THEN 'C' WHEN 'SA_REP' THEN 'D' WHEN 'ST_CLERK' THEN 'E' ELSE 'O' END) "Grade" **FROM** employees;
