@@ -20,3 +20,5 @@
 - **SELECT** a.last_name, a.job_id, a.department_id, b.department_name **FROM** employees a, departments b, locations c **WHERE** a.department_id = b.department_id AND b.location_id = c.location_id AND c.city = 'Toronto';
 ---
 ### 6.顯示員工姓氏、員工編號以及他們經理的姓氏和經理編號。將這些列分別標記為Employee、Emp#、Manager和Mgr#。要求同上
+- **SELECT** employee.last_name "Employee", employee.employee_id "Emp#", manager.last_name "Mgr#", employee.manager_id "Manager" **FROM** employees employee JOIN employees manager ON (employee.manager_id = manager.employee_id);
+- **SELECT** employee.last_name "Employee", employee.employee_id "Emp#", manager.last_name "Mgr#", employee.manager_id "Manager" **FROM** employees employee, employees manager **WHERE** employee.manager_id = manager.employee_id;
