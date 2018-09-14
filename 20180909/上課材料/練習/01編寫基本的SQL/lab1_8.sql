@@ -1,2 +1,2 @@
-SELECT employee_id "Emp #", first_name "Employees", job_id "Job", hire_date "Hire Date" 
+SELECT first_name || ', ' || job_id "Employee and Title" 
 FROM employees;
