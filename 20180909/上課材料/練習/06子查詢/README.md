@@ -18,5 +18,5 @@
 ### 6.查詢部門工作地點在Seattle,且職務與111號員工相同的所有員工的員工編號、姓氏、部門編號和職務.
 - **SELECT** employee_id, last_name, department_id, job_id **FROM** employees **WHERE** department_id IN(**SELECT** department_id **FROM** departments JOIN locations USING(location_id) **WHERE** city = 'Seattle') AND job_id = (**SELECT** job_id **FROM** employees **WHERE** employee_id = 111);
 ---
-### 7.查詢工資超過平均工資,且部門裡有員工姓氏中包含字母u的所有員工的員工編號,姓氏和工資
+### 7.查詢工資超過平均工資,且部門裡有員工姓氏中包含字母u的所有員工的員工編號,姓氏和工資.
 - **SELECT** employee_id, last_name, salary **FROM** employees **WHERE** department_id IN(**SELECT** department_id **FROM** employees **WHERE** last_name LIKE '%u%') AND salary > (**SELECT** AVG(salary) **FROM** employees);
