@@ -2,7 +2,8 @@
 
 檔案包括
 ---
-上課講解的pdf
+上課講解的材料
+## pptx
 - Lesson 6: Reporting Aggregated Data Using the Group Functions
 - Lesson 7: Displaying Data from Multiple Tables Using Joins
 - Lesson 8: Using Subqueries to Solve Queries
@@ -15,6 +16,11 @@
 - Lesson 14: Using SQL Developer
 - Lesson 15: Using SQL*Plus
 - Lesson 16: Commonly Used SQL Commands
+## docx
+- oracle分析函數over
+- oracle分析函數Rank, Dense_rank, row_number
+- 級聯查詢(Hierarchical Queries)
+- 級聯查詢(Hierarchical Queries)偽列Level
 
 重點
 ---
