@@ -29,3 +29,13 @@
 	- e.g. sqlplus hr/hr@oaecdb
 - 執行sql用這個指令
 	- sqlplus hr/hr@oaecdb @.sql
+
+額外學習
+---
+sql練習4-10
+
+成功之路: Oracle 11g學習筆記
+
+劍破冰山 Oracle開發藝術
+
+Oracle 11g 數據庫項目應用開發
