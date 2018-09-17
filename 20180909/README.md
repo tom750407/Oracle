@@ -2,7 +2,8 @@
 
 檔案包括
 ---
-上課講解的pdf
+上課講解的材料
+## pptx
 - Lesson 1: Introduction
 - Lesson 2: Retrieving Data using SQL SELECT
 - Lesson 3: Restricting and Sorting Data
