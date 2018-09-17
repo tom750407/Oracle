@@ -1,4 +1,4 @@
-# 第三堂課 PLSQL Development安裝與sql的寫法
+# 第三堂課 PLSQL Development安裝與SQL用法
 
 檔案包括
 ---
