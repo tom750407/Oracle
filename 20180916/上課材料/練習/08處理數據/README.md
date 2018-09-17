@@ -13,13 +13,28 @@
 - **INSERT INTO** my_emp (empid, last_name, first_name, userid, salary) **VALUES** (2, 'Dancs', 'Betty', 'bdancs', 860);
 ---
 ### 3.要求，編寫一個腳本，名為loademp.sql，功能是在MY_EMPLOYEE表中插入示例表中的數據，要求使用替代變量，使該腳本可以被重複調用，並且USERID列，使用表達式構造出來，構造方法，將名字的第一個字母與姓氏的前7個字母連接起來，並且小寫。使用該腳本將示例數據中的第三、四行插入MY_EMPLOYEE表。
-
+### sql develop
+- **INSERT INTO** my_emp **VALUES**(&empid, '&last_name', '&first_name', LOWER(SUBSTR('&first_name',1 , 1)) || LOWER(SUBSTR('&last_name', 1, 7)), &salary);
+### sql * plus
+- undefine last_name;
+- undefine first_name;
+- **INSERT INTO** my_emp **VALUES**(&empid, '&&last_name', '&&first_name', LOWER(SUBSTR('&first_name', 1, 1)) || LOWER(SUBSTR('&last_name', 1, 7)), &salary);
+### bash腳本
+- DECLARE
+- id number(38) :=&id;
+- last_name char(25) :='&last_name';
+- first_name char(25) :='&first_name';
+- salary number(38) :=&salary;
+- BEGIN
+- **INSERT INTO** my_emp **VALUES**(id, last_name, first_name, LOWER(SUBSTR(first_name, 1, 1)) || LOWER(SUBSTR(last_name, 1, 7)), salary);
+- END;
+- /
 ---
 ### 4.確認MY_EMPLOYEE表中的結果
-
+- **SELECT** * **FROM** my_emp;
 ---
 ### 5.將剛才添加的數據永久化。
-
+- **COMMIT**
 ---
 ### 6.將員工3的姓氏改為Drexler
 
