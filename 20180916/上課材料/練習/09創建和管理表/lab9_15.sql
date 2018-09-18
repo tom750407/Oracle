@@ -1,0 +1,2 @@
+ALTER TABLE emp
+ADD(commission NUMBER(2,2) DEFAULT 0 NOT NULL);

@@ -1,0 +1,2 @@
+ALTER TABLE emp
+MODIFY(last_name VARCHAR2(50));
