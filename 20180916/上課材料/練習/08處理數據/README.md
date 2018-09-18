@@ -30,13 +30,7 @@
 - END;
 - /
 ---
-### 4.確認MY_EMPLOYEE表中的結果
-- **SELECT** * **FROM** my_emp;
----
-### 5.將剛才添加的數據永久化。
-- **COMMIT**
----
-### 6.將員工3的姓氏改為Drexler
+### 4.將員工3的姓氏改為Drexler
 #### sql developer/sql * plus
 - **UPDATE** my_emp **SET** last_name = 'Drexler' **WHERE** empid = 3;
 #### pl
@@ -48,7 +42,7 @@
 - END;
 - /
 ---
-### 7.將工資低於900的員工工資改為1000
+### 5.將工資低於900的員工工資改為1000
 #### sql developer/sql * plus
 - **UPDATE** my_emp **SET** salary = 1000 **WHERE** salary < 900;
 #### pl
@@ -59,11 +53,44 @@
 - END;
 - /
 ---
-### 8.驗證對表所做的更改
-- **SELECT** * **FROM** my_emp; 
+### 6.將Betty Dancs從MY_EMPLOYEE表中刪除
+#### sql developer/sql * plus
+- **DELETE FROM** my_emp **WHERE** (TRIM(first_name) || ' ' || TRIM(last_name)) = 'Betty Dancs';
+#### pl
+- DECLARE
+- name varchar(50) :='&name';
+- BEGIN
+- **DELETE FROM** my_emp **WHERE** (TRIM(first_name) || ' ' || TRIM(last_name)) = name;
+- END;
+- /
 ---
-### 9.將Betty Dancs從MY_EMPLOYEE表中刪除
-- **DELETE** **FROM** my_emp **WHERE** (TRIM(first_name) || ' ' || TRIM(last_name)) = 'Betty Dancs';
----
-### 10.確認對表的修改
-- **SELECT** * **FROM** my_emp;
+## 以下題目需要標記事務處理過程中的記錄點
+### 7.插入員工5
+### 8.要求修改員工工資為1550的員工工資為3000
+### 9.將員工3的姓改回Biri
+### 10.刪除Ben Biri所在行
+### 11.將刪除的Betty Dancs添加回來
+### 12.要求回退到插入Betty Dancs之前，要求要保留之前的對表的修改。
+### 13.將7題以後的對數據的操作永久化。
+- 7.Insert employee 5
+	- **INSERT INTO** my_emp(empid, last_name, first_name, Userid, salary) **VALUES** (5, 'Ropeburn', 'Audrey', LOWER(SUBSTR('Audrey', 1, 1)) || LOWER(SUBSTR('Ropeburn', 1, 7)),1550);
+	- **SELECT** * **FROM** my_emp;
+- 8.Update salary to 3000 where salary is 1550
+	- **UPDATE** my_emp **SET** salary = 3000 **WHERE** salary = 1550;
+	- **SELECT** * **FROM** my_emp;
+- 9.Update last name to Biri for employee 3
+	- **UPDATE** my_emp **SET** last_name = 'Biri' **WHERE** empid = 3;
+	- **SELECT** * **FROM** my_emp;
+- 10.Delete Ben Biri this row
+	- DELETE **FROM** my_emp **WHERE** TRIM(first_name) || ' ' || TRIM(last_name) = 'Ben Biri';
+	- **SELECT** * **FROM** my_emp;
+- Set savepoint a SAVEPOINT a;
+- 11.ADD Betty Dancs
+	- **INSERT INTO** my_emp(empid, last_name, first_name, Userid, salary) **VALUES** (2, 'Dancs', 'Betty', LOWER(SUBSTR('Betty', 1, 1)) || LOWER(SUBSTR('Dancs', 1, 7)),860);
+	- **SELECT** * **FROM** my_emp;
+- 12.Rollback before step 11
+	- ROLLBACK TO SAVEPOINT a;
+	- **SELECT** * **FROM** my_emp;
+- 13.Commit all the change
+	- COMMIT;
+	- **SELECT** * **FROM** my_emp;
