@@ -13,13 +13,13 @@
 - **INSERT INTO** my_emp (empid, last_name, first_name, userid, salary) **VALUES** (2, 'Dancs', 'Betty', 'bdancs', 860);
 ---
 ### 3.要求，編寫一個腳本，名為loademp.sql，功能是在MY_EMPLOYEE表中插入示例表中的數據，要求使用替代變量，使該腳本可以被重複調用，並且USERID列，使用表達式構造出來，構造方法，將名字的第一個字母與姓氏的前7個字母連接起來，並且小寫。使用該腳本將示例數據中的第三、四行插入MY_EMPLOYEE表。
-### sql develop
+#### sql develop
 - **INSERT INTO** my_emp **VALUES**(&empid, '&last_name', '&first_name', LOWER(SUBSTR('&first_name',1 , 1)) || LOWER(SUBSTR('&last_name', 1, 7)), &salary);
-### sql * plus
+#### sql * plus
 - undefine last_name;
 - undefine first_name;
 - **INSERT INTO** my_emp **VALUES**(&empid, '&&last_name', '&&first_name', LOWER(SUBSTR('&first_name', 1, 1)) || LOWER(SUBSTR('&last_name', 1, 7)), &salary);
-### bash腳本
+#### pl
 - DECLARE
 - id number(38) :=&id;
 - last_name char(25) :='&last_name';
@@ -37,15 +37,33 @@
 - **COMMIT**
 ---
 ### 6.將員工3的姓氏改為Drexler
-
+#### sql developer/sql * plus
+- **UPDATE** my_emp **SET** last_name = 'Drexler' **WHERE** empid = 3;
+#### pl
+- DECLARE
+- id number(20) :=&id;
+- name varchar(20) :='&name';
+- BEGIN
+- **UPDATE** my_emp **SET** last_name = name **WHERE** empid = id;
+- END;
+- /
 ---
 ### 7.將工資低於900的員工工資改為1000
-
+#### sql developer/sql * plus
+- **UPDATE** my_emp **SET** salary = 1000 **WHERE** salary < 900;
+#### pl
+- DECLARE
+- nsalary number(20) := &salary;
+- BEGIN
+- **UPDATE** my_emp **SET** salary = nsalary **WHERE** salary < 900;
+- END;
+- /
 ---
 ### 8.驗證對表所做的更改
-
+- **SELECT** * **FROM** my_emp; 
 ---
 ### 9.將Betty Dancs從MY_EMPLOYEE表中刪除
-
+- **DELETE** **FROM** my_emp **WHERE** (TRIM(first_name) || ' ' || TRIM(last_name)) = 'Betty Dancs';
 ---
 ### 10.確認對表的修改
+- **SELECT** * **FROM** my_emp;
