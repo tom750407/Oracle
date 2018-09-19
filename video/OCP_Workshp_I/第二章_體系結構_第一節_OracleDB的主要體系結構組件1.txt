@@ -1,5 +1,5 @@
 Oracle DB的定義
-- Oracle 關係型數據庫管理系統 Relational Database Management System
+- Oracle 關係型數據庫管理系統(Relational Database Management System)
     - 關係模型 - 使用二維表來存取數據
     - 數據庫 - 存儲二維表數據的文件
     - 管理系統 - 軟體讓我們能夠對數據庫進行曾刪改查
