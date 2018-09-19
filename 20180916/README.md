@@ -25,11 +25,22 @@
 重點
 ---
 - 連接sqlplus用這個指令
-	- sqlplus (帳號)/(密碼)@(資料庫)
-	- e.g. sqlplus hr/hr@oaecdb
+	- sqlplus user/pass@database
+	- e.g. sqlplus hr/hr@pdboaec
 - 執行sql用這個指令
-	- sqlplus hr/hr@oaecdb @.sql
-
+	- sqlplus user/pass@database @sql
+	- e.g. sqlplus hr/hr@pdboaec @insert.sql
+- 啟動oracle database
+	- 首先先確認listener是否啟動
+		- lsnrctl status - 確認listener狀態
+		- lsnrctl start - 啟動listener
+		- lsnrctl shutdown - 關閉listener
+	- 再來就是啟動服務了,先以管理員身分登入sqlplus
+		- sqlplus / as sysdba - 以系統管理員身分連接數據庫
+	- 登入到sql指令模式後就可以將實例與資料庫開啟
+		- start up - 開啟實例
+		- alter pluggable database pdboaec open; - 開啟pdboaec數據庫
+		- exit - 退出
 額外學習
 ---
 sql練習4-10
