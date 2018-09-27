@@ -1,4 +1,4 @@
-# 2018/09/26 vocabulary
+# 2018/09/27 vocabulary
 Vocabulary|Definition
 ----------|----------
 elasticity|彈性
@@ -20,7 +20,6 @@ utilization|使用
 inspection|檢查
 server load balancer|負載均衡
 disaster recovery system|容災系統
-
 
 # 雲伺服器(Elastic Compute Service)
 - 基礎雲端運算服務
