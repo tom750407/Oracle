@@ -1,6 +1,15 @@
 # 2018/09/29 vocabulary
 Vocabulary|Definition
 ----------|----------
+accessible|可訪問的
+downtime|停止工作期
+subsequent|隨後的
+interrupt|打斷
+intruder|侵入者
+immune|不受影響的
+consistent|一致的
+continuous|連續的
+facility|設備
 
 # 備份(backup)
 - 按備份系統的準備程度，可將其分為冷備份、溫備份和熱備份三大類:
