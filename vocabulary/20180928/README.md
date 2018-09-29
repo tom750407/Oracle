@@ -8,23 +8,11 @@ parity|奇偶校驗
 redundant|冗餘
 inexpensive|廉價
 independent|獨立
-block interleaving|
+duplexing|相互
+interleaving|交叉
 disk Striping|硬碟分割
 data striping|數據分割/條帶化
 redundant array of independent disks|磁碟陣列
-
-Level 0 -- Striped Disk Array without Fault Tolerance  
-Level 1 -- Mirroring and Duplexing  
-Level 2 -- Error-Correcting Coding  
-Level 3 -- Bit-Interleaved Parity  
-Level 4 -- Dedicated Parity Drive  
-Level 5 -- Block Interleaved Distributed Parity  
-Level 6 -- Independent Data Disks with Double Parity  
-Level 0+1 -- Mirror of Stripes  
-Level 1+0 -- Stripe of Mirror  
-
-
-
 
 Data striping
 - 當多個進程同時訪問一個磁盤時，可能會出現磁盤衝突
@@ -35,7 +23,12 @@ Data striping
 - 這就能使多個進程同時訪問數據的多個不同部分而不會造成磁盤衝突，而且在需要對這種數據進行順序訪問的時候可以獲得最大程度上的I/O 並行能力，從而獲得非常好的性能
 - 由於條帶化在I/O 性能問題上的優越表現，以致於在應用系統所在的計算環境中的多個層次或平台都涉及到了條帶化的技術，如操作系統和存儲系統這兩個層次中都可能使用條帶化技術
 
-JBOD(Just a Bunch Of Disks)
+RAID(Redundant Arrays of Independent Disks)
+- 把多個硬碟集合起來，組成一個磁碟群組，透過不同RAID機制，讓RAID磁碟陣列可以達到儲存更快速或更運作更安全等目的
+- 一般來說，RAID把多個硬碟組合成為一個邏輯磁區，RAID的應用大部分會在比較重要的伺服器、網路主機或執行重要工作的電腦中，並且常使用完全相同的硬碟作為組合，一般使用者的電腦比較少會用到RAID磁碟陣列
+- RAID的目的在於將相同的資料儲存在多個磁碟機中不同的地方，並且改善儲存子系統的效能
+- RAID的優點為提供更好的生產力效能及/或資料錯誤容忍度
+- 透過將工作量平行分散到多個實體磁碟機中可以達到較好的效能
+- 而藉由資料多重操作，當一個 (或多個) 磁碟機或磁區發生問題時，可以在另一個磁碟機中找到資料的映射拷貝，則可達到錯誤容忍度
 
-RAID(Redundant Arrays of Inexpensive Disks)
 
