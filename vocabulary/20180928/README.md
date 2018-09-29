@@ -45,4 +45,4 @@ redundant array of independent disks|磁碟陣列
 - 資料的存放機制是由第一顆磁碟開始依序往後存放，即作業系統看到的是一個大磁碟（由許多小磁碟組成）
 - 如果磁碟損毀，則該顆硬碟上的所有資料將無法救回
 - 若第一顆硬碟損壞，通常無法作救援（因大部分檔案系統將檔案表存在磁碟前端，即第一顆），失去檔案表即失去一切資料
-<img src="" width=
+<img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/JBOD.jpg" width="300px">
