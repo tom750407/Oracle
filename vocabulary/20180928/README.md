@@ -128,7 +128,18 @@ RAID 1，必須由2個以上的硬碟所組成，由磁碟陣列(RAID)來控制�
 - RAID 5與RAID 0的組合，先作RAID 5，再作RAID 0，也就是對多組RAID 5彼此構成Stripe存取
 	- 由於RAID 50是以RAID 5為基礎，而RAID 5至少需要3顆硬碟，因此要以多組RAID 5構成RAID 50，至少需要6顆硬碟
 	- 以RAID 50最小的6顆硬碟組態為例，先把6顆硬碟分為2組，每組3顆構成RAID 5，如此就得到兩組RAID 5，然後再把兩組RAID 5構成RAID 0
-- RAID 50在底層的任一組或多組RAID 5中出現1顆硬碟損壞時，仍能維持運作，不過如果任一組RAID 5中出現2顆或2顆以上硬碟損毀，整組RAID 50就會失效
-- RAID 50由於在上層把多組RAID 5構成Stripe，效能比起單純的RAID 5高，容量利用率比RAID5要低	- 比如同樣使用9顆硬碟，由各3顆RAID 5再組成RAID 0的RAID 50，每組RAID 5浪費一顆硬碟，利用率為(1-3/9)，RAID 5則為(1-1/9)
+- RAID 50在底層的任一組或多組RAID 5中出現1顆硬碟損壞時，仍能維持運作
+	- 不過如果任一組RAID 5中出現2顆或2顆以上硬碟損毀，整組RAID 50就會失效
+- RAID 50由於在上層把多組RAID 5構成Stripe，效能比起單純的RAID 5高，容量利用率比RAID5要低
+	- 比如同樣使用9顆硬碟，由各3顆RAID 5再組成RAID 0的RAID 50，每組RAID 5浪費一顆硬碟，利用率為(1-3/9)，RAID 5則為(1-1/9)
 <img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/RAID%2050.jpg" height="270px">
+
+# RAID 60
+- RAID 6與RAID 0的組合：先作RAID 6，再作RAID 0，也就是對多組RAID 6彼此構成Stripe存取
+	- RAID 6至少需具備4顆硬碟，所以RAID 60的最小需求是8顆硬碟
+- 由於底層是以RAID 6組成，所以RAID 60可以容許任一組RAID 6中損毀最多2顆硬碟，而系統仍能維持運作
+	- 不過只要底層任一組RAID 6中損毀3顆硬碟，整組RAID 60就會失效，當然這種情況的機率相當低
+- 比起單純的RAID 6，RAID 60的上層透過結合多組RAID 6構成Stripe存取，因此效能較高
+	- 不過使用門檻高，而且容量利用率低是較大的問題
+<img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/RAID%2060.jpg" height="270px">
 
