@@ -10,6 +10,10 @@ immune|不受影響的
 consistent|一致的
 continuous|連續的
 facility|設備
+appropriately|適當
+alternative|替代方案
+impact|衝擊
+replication|複製
 
 # 備份(backup)
 - 按備份系統的準備程度，可將其分為冷備份、溫備份和熱備份三大類:
