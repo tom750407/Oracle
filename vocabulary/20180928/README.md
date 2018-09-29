@@ -121,4 +121,4 @@ RAID 1，必須由2個以上的硬碟所組成，由磁碟陣列(RAID)來控制�
 	- RAID 0+1比起RAID 1+0有著更快的讀寫速度，不過也多了一些會讓整個硬碟組停止運轉的機率
 	- 只要同一組的硬碟全部損毀，RAID 0+1就會停止運作，而RAID 1+0則可以在犧牲RAID 0的優勢下正常運作
 - RAID 10巧妙的利用了RAID 0的速度以及RAID 1的保護兩種特性，不過它的缺點是需要的硬碟數較多，因為至少必須擁有四個以上的偶數硬碟才能使用  
-<img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/RAID%201+0.jpg" height="200px"><img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/RAID%200+1.jpg" height="200px">
+<img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/RAID%201+0.jpg" height="300px"><img src="https://github.com/tom750407/Oracle/blob/master/vocabulary/20180928/src/RAID%200+1.jpg" height="300px">
