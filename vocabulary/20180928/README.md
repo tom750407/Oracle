@@ -13,15 +13,15 @@ disk Striping|硬碟分割
 data striping|數據分割/條帶化
 redundant array of independent disks|磁碟陣列
 
-Level 0 -- Striped Disk Array without Fault Tolerance
-Level 1 -- Mirroring and Duplexing
-Level 2 -- Error-Correcting Coding
-Level 3 -- Bit-Interleaved Parity
-Level 4 -- Dedicated Parity Drive
-Level 5 -- Block Interleaved Distributed Parity
-Level 6 -- Independent Data Disks with Double Parity
-Level 0+1 -- Mirror of Stripes
-Level 1+0 -- Stripe of Mirror
+Level 0 -- Striped Disk Array without Fault Tolerance  
+Level 1 -- Mirroring and Duplexing  
+Level 2 -- Error-Correcting Coding  
+Level 3 -- Bit-Interleaved Parity  
+Level 4 -- Dedicated Parity Drive  
+Level 5 -- Block Interleaved Distributed Parity  
+Level 6 -- Independent Data Disks with Double Parity  
+Level 0+1 -- Mirror of Stripes  
+Level 1+0 -- Stripe of Mirror  
 
 
 
