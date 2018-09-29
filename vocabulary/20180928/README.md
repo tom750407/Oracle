@@ -10,9 +10,7 @@ inexpensive|廉價
 independent|獨立
 duplexing|相互
 interleaving|交叉
-disk Striping|硬碟分割
 data striping|數據分割/條帶化
-redundant array of independent disks|磁碟陣列
 
 # Data striping
 - 當多個進程同時訪問一個磁盤時，可能會出現磁盤衝突
