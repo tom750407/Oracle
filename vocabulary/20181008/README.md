@@ -14,7 +14,7 @@ failure|失敗
 	- normal 3塊
 	- high 5塊
 ### 外部冗餘（external redundancy）
-	- 表示Oracle不幫你管理鏡像，功能由外部存儲系統實現，比如通過RAID技術
+- 表示Oracle不幫你管理鏡像，功能由外部存儲系統實現，比如通過RAID技術
 - 有效磁碟空間是所有磁碟設備空間的大小之和
 ### 正常冗餘（normal redundancy）
 - 表示Oracle提供2份鏡像來保護數據(鏡像數據一次)，以提高數據的安全，最少需要兩塊磁碟（兩個failure group）
