@@ -349,68 +349,79 @@
 		- 能使主數據庫跟副數據庫的數據達成一致性
 		- 當某天主數據庫不能運作了我們還能切換到副數據庫
 ### 進程的啟動順序
-`
-- 先啟動操作系統 -> 再啟動Grid框架 -> ASM -> storage service
-		 		   -> listener -> network service
-		 		   -> instance -> database
-`
+- 啟動順序
+	- 先啟動操作系統
+	- 再啟動Grid框架
+	- 最後啟動
+		- ASM
+			- storage service
+		- listener
+			- network service
+		- instance
+			- database
 - Oracle Grid Infrastructure由操作系統初始化守護程序啟動
-	- 操作系統初始化守護程序 -> Grid Infrastructure包裝腳本 -> Grid Infrastructure守護程序和進程 -> ASM實例
-		- init- init.ohasd(root)	 - ohasd.bin -> 監聽程序
-								 - oraagent.bin-> DB實例
-								 - orarootagent.bin-> 用戶定義的應用程序
-								 - diskmon.bin
-									 - cssdagent
-									 - ocssd.bin
-	- Oracle Grid Infrastructure安裝會修改/etc/inittab文件,以確保他能在每次操作系統啟動時在相應的運行級別啟動
-
-存儲結構
-- 數據庫存儲體系結構
-	- 數據文件
+	- 先啟動操作系統初始化守護程序
+		- init
+	- 再啟動Grid Infrastructure包裝腳本
+		- init.ohasd(root)
+	- 之後啟動Grid Infrastructure守護程序和進程
+		- ohasd.bin
+		- oraagent.bin
+		- orarootagent.bin
+		- diskmon.bin
+		- cssdagent
+		- ocssd.bin
+	- 最後啟動實例與程序
+		- ASM實例
+		- 監聽程序
+		- DB實例
+		- 用戶定義的應用程序
+- Oracle Grid Infrastructure安裝會修改/etc/inittab文件,以確保他能在每次操作系統啟動時在相應的運行級別啟動
+# 存儲結構
+### 數據庫存儲體系結構
+- 數據文件
 	- 用戶數據
-	- 備份文件
+- 備份文件
 	- 數據文件
-	- 控制文件
+- 控制文件
 	- 檢查點信息
 	- 數據庫結構信息
 	- 備份信息
-	- 聯機重作日誌文件
+- 聯機重作日誌文件
 	- 重作日誌
-	- 歸檔重作日誌文件
+- 歸檔重作日誌文件
 	- 聯機重作日誌文件
-	- 參數文件
+- 參數文件
 	- 數據庫配置與性能有關的參數
-	- 口令文件
+- 口令文件
 	- sys用戶的密碼
-	- 預警日誌和跟蹤文件
+- 預警日誌和跟蹤文件
 	- 嚴重的錯誤信息
 	- 進程狀態
 	- 內存狀態
 	- CUP狀態
-
-- 數據文件邏輯結構
-	- 段、區和塊
-	- Disk blocks(File System Storage)
-		- 操作系統對硬碟進行格式化,將硬碟分成無數個小塊來儲存文件,這些塊的大小不一,一般大小為512byte
-	- Data blocks
-		- 由操作系統的小塊組成的數據塊,大小為8kb,為了提升性能,從硬碟讀取數據會以一個數據塊為最小單位來讀寫數據進內存中
-	- Extents
-		- 由一些連續的數據塊組成的區,大小不固定,需要多少的空間就分配多少區,為了方便空間管理,因為如果使用塊來插入大數據時,會需要大量的空間分配,這樣會浪費大量的時間
-	- Segment
-		- 由儲存著同一類型數據的區組成的段,段對應了數據庫中的表,一張表就是一個段
-	- Tablespace
-		- 段儲存在表空間中,就像是表的文件夾,將同一類型的表放在相同的表空間內,方便管理
-
-- 邏輯和物理數據庫結構
-	- 邏輯數據庫結構
+### 數據文件邏輯結構
+- 段、區和塊
+- Disk blocks(File System Storage)
+	- 操作系統對硬碟進行格式化,將硬碟分成無數個小塊來儲存文件,這些塊的大小不一,一般大小為512byte
+- Data blocks
+	- 由操作系統的小塊組成的數據塊,大小為8kb,為了提升性能,從硬碟讀取數據會以一個數據塊為最小單位來讀寫數據進內存中
+- Extents
+	- 由一些連續的數據塊組成的區,大小不固定,需要多少的空間就分配多少區,為了方便空間管理,因為如果使用塊來插入大數據時,會需要大量的空間分配,這樣會浪費大量的時間
+- Segment
+	- 由儲存著同一類型數據的區組成的段,段對應了數據庫中的表,一張表就是一個段
+- Tablespace
+	- 段儲存在表空間中,就像是表的文件夾,將同一類型的表放在相同的表空間內,方便管理
+### 邏輯和物理數據庫結構
+- 邏輯數據庫結構
 	- Oracle data block -> Extent -> Segment -> Tablespace -> Database
-	- 數據庫最小的I/O單位,多個數據塊(Oracle data block)組成區(Extent)
-	- 表(段)空間分配的最小單位,多個區組成段(Segment)
-	- 用來儲存數據的二維表,多個段組成表空間(Tablespace)
-	- 用來儲存相同類型表的空間,多個表空間組成數據庫(Database)
-	- 物理數據庫結構
+		- 數據庫最小的I/O單位,多個數據塊(Oracle data block)組成區(Extent)
+		- 表(段)空間分配的最小單位,多個區組成段(Segment)
+		- 用來儲存數據的二維表,多個段組成表空間(Tablespace)
+		- 用來儲存相同類型表的空間,多個表空間組成數據庫(Database)
+- 物理數據庫結構
 	- Data file
-	- 物理上可以看到的文件 Data file,與Tablespace為多對一關係,是為表空間提供空間的,當表空間傭有了空間後就可以將空間往下劃分為段、區和塊,劃分完後便可以往裡面存數據
+		- 物理上可以看到的文件 Data file,與Tablespace為多對一關係,是為表空間提供空間的,當表空間傭有了空間後就可以將空間往下劃分為段、區和塊,劃分完後便可以往裡面存數據
 	- 數據文件又分為多種存儲系統
 		- SAN
 		- NAS 
@@ -419,10 +430,9 @@
 		- NFS
 		- ASM
 		- RAW
-
-ASM存儲組件
-- 自動存儲管理Automatic Storage Management
-	- 是可移植的高性能集群文件系統
+# ASM存儲組件
+### 自動存儲管理Automatic Storage Management
+- 是可移植的高性能集群文件系統
 	- 可移植
 		- ASM依賴的是Grid框架而不是操作系統
 		- 能輕鬆將ASM從一個系統遷移到另一個系統
@@ -432,35 +442,33 @@ ASM存儲組件
 		- 每次寫入數據時,ASM就將數據分割/條帶化(data striping),然後將切分的數據同時寫入到多塊磁碟中
 	- 集群文件系統
 		- ASM可以將多台Server合再一起使用
-	- 管理Oracle DB文件
+- 管理Oracle DB文件
 	- Oracle DB文件就放在ASM裡面
 	- Oracle DB文件內儲存著大量數據,因此在讀取寫入時I/O越快越好
-	- 使用ASM Cluster File System(ACFS)
+- 使用ASM Cluster File System(ACFS)
 	- ASM用來做存儲用的文件系統
-	- 管理應用程序的文件
+- 管理應用程序的文件
 	- ASM不僅僅能儲存數據文件,同時還能儲存其他應用程序的文件
-	- 將數據分布到各個磁碟中以平衡負載
+- 將數據分布到各個磁碟中以平衡負載
 	- ASM將寫入或讀取操作分散到各個磁碟中同時做
-	- 建立數據鏡像
+- 建立數據鏡像
 	- Oracle提供鏡像來保護數據
-	- 解決存儲管理難題
-
-- ASM體系結構
-	- ASM Cluster File System
+- 解決存儲管理難題
+### ASM體系結構
+- ASM Cluster File System
 	- ASM的文件系統,可以保存應用程序的文件 
-	- ASM Files for Oracle Database
+- ASM Files for Oracle Database
 	- 給Oracle管理數據文件使用的區域
-	- ASM Dynamic Volume Manager
+- ASM Dynamic Volume Manager
 	- 動態卷管理,管理ASM使用的空間
-
-- ASM存儲組件
-	- Oracle Database datafile 數據庫的數據文件可以儲存到兩個可選擇的空間
+### ASM存儲組件
+- Oracle Database datafile 數據庫的數據文件可以儲存到兩個可選擇的空間
 	- File system or Raw device 文件系統或裸設備
 	- ASM
-	- ASM disk group <- ASM file <- ASM extent <- ASM allocation unit -> ASM disk -> ASM disk group
+- ASM disk group <- ASM file <- ASM extent <- ASM allocation unit -> ASM disk -> ASM disk group
 	- 多個ASM磁碟(ASM disk)組成一個ASM磁碟組(ASM disk group)
 	- ASM磁碟組中儲存著多個ASM文件(ASM file)
 	- ASM磁碟格式化後分成多個AU(ASM allocation unit),通常1個為1MB的大小,是ASM中最小的單位
 	- 多個AU組成一個區(ASM extent),方便空間分配所設置的邏輯結構
 	- 多個ASM區為一個ASM文件提供空間
-	- ASM文件不會單獨儲存在某一個磁碟中,而是一定儲存在一個磁碟組裡,為了平衡負載,將條帶化的數據分散並同時寫入不同磁碟中
+- ASM文件不會單獨儲存在某一個磁碟中,而是一定儲存在一個磁碟組裡,為了平衡負載,將條帶化的數據分散並同時寫入不同磁碟中
