@@ -1,4 +1,4 @@
-# 2018/09/28 vocabulary
+# 2018/09/28 Raid
 Vocabulary|Definition
 ----------|----------
 striping|切分
