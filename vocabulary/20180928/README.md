@@ -5,7 +5,6 @@ striping|切分
 span|延展
 error correction code|錯誤修正碼
 parity|奇偶校驗
-redundant|冗餘
 inexpensive|廉價
 independent|獨立
 duplexing|相互
