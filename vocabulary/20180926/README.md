@@ -1,4 +1,4 @@
-# 2018/09/26 vocabulary
+# 2018/09/26 Distributed Computing
 Vocabulary|Definition
 ----------|----------
 distributed computing|分布式計算
