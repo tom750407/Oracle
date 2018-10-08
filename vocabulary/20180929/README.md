@@ -1,4 +1,4 @@
-# 2018/09/29 Backup
+# 2018/09/29 Database Backup
 Vocabulary|Definition
 ----------|----------
 accessible|可訪問的
