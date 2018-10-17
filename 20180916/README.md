@@ -38,7 +38,7 @@
 	- 再來就是啟動服務了,先以管理員身分登入sqlplus
 		- sqlplus / as sysdba - 以系統管理員身分連接數據庫
 	- 登入到sql指令模式後就可以將實例與資料庫開啟
-		- start up - 開啟實例
+		- startup - 開啟實例
 		- alter pluggable database pdboaec open; - 開啟pdboaec數據庫
 		- exit - 退出
 額外學習
