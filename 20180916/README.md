@@ -34,7 +34,7 @@
 	- 首先先確認listener是否啟動
 		- lsnrctl status - 確認listener狀態
 		- lsnrctl start - 啟動listener
-		- lsnrctl shutdown - 關閉listener
+		- lsnrctl stop - 關閉listener
 	- 再來就是啟動服務了,先以管理員身分登入sqlplus
 		- sqlplus / as sysdba - 以系統管理員身分連接數據庫
 	- 登入到sql指令模式後就可以將實例與資料庫開啟
