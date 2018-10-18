@@ -1,17 +1,20 @@
 # NODE - learnyounode
 
 ## Exercise 1 - Hello World
-### Task:  
+### Task:
 Write a program that prints the text "HELLO WORLD" to the console (stdout).
-### Code:  
+
+---
+### Code:
 ```javascript
 console.log("HELLO WORLD");
 ```
+
+---
 ### Extend:
 #### process.stdout.write
 ```
-This can also use in printing lines.  
-But it only does a very basic functionality.  
+This can also use in printing lines, but it only does a very basic functionality.
 ```
 #### Example A
 ```javascript
@@ -24,7 +27,7 @@ Hello WorldTestig
 ```
 #### console.log
 ```
-On the other hand **console.log** can do more.  
+On the other hand this can do more.  
 ```
 #### Example B
 ```javascript
