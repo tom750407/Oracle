@@ -8,20 +8,51 @@ Write a program that prints the text "HELLO WORLD" to the console (stdout).
 console.log("HELLO WORLD");
 ```
 #### Extend:
-**process.stdout.write** can also use in printing line.  
+process.stdout.write
+```
+"process.stdout.write" can also use in printing lines.  
 But it only does a very basic functionality.  
+```
 Example A
 ```javascript
 process.stdout.write("Hello World");
-process.stdout.write("Testing");
+process.stdout.write("Testing"); //If we don't put break line (\n) at the end, two sentences will be merged into one
 ```
 Output
-```javascript
-Hello WorldTesting //If we don't put break line (\n) at the end, we will get a massive sentence
+```
+Hello WorldTestig
+```
+console.log
 ```
 On the other hand **console.log** can do more.  
+```
 Example B
 ```javascript
-console.log("Hello","World");
+console.log("Hello World"); 
+console.log("Testing"); //We don't need the break line, because it was already formated
+```
+Output
+```
+Hello World
+Testing
+```
+Example C
+```javascript
+console.log("Hello World\n","Testing"); //We can write more than one string
+```
+Output
+```
+Hello World
+Testing
+```
+Example D
+```javascript
+var text = "Testing";
+console.log("Hello World\n%s",text); //We can make associations
+```
+Output
+```
+Hello World
+Testing
 ```
 ###
