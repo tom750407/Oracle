@@ -18,18 +18,19 @@ console.log("HELLO WORLD");
 PS C:\Users\tsuochiayang\Desktop\Oracle\node> node .\Hello_World.js
 HELLO WORLD
 ```
+
 ---
 ### Extend:
 #### process.stdout.write
 ```
 This can also use in printing lines, but it only does a very basic functionality.
 ```
-#### Example A
+#### Example
 ```javascript
 process.stdout.write("Hello");
 process.stdout.write("World"); //If we don't put break line at the end, two sentences will be merged into one
 ```
-#### Output
+#### Result
 ```
 HelloWorld
 ```
@@ -39,7 +40,7 @@ HelloWorld
 ```
 On the other hand this can do more.  
 ```
-#### Example B
+#### Example
 ```javascript
 console.log("Hello"); 
 console.log("World1"); //We don't need the break line, because it was already formated
@@ -49,7 +50,7 @@ console.log("Hello","\nWorld2"); //We can write more than one string
 var text = "World3";
 console.log("Hello\n%s",text); //We can make associations
 ```
-#### Output
+#### Result
 ```
 Hello
 World1
@@ -60,6 +61,7 @@ World2
 Hello
 World3
 ```
+
 ---
 ## Exercise 2 - Baby Steps
 ### Task:
@@ -82,4 +84,26 @@ console.log(result);
 ```
 PS C:\Users\tsuochiayang\Desktop\Oracle\node> node .\Baby_Steps.js 1 2 3
 6
+```
+
+---
+### Extend:
+```
+Element to the process.argv array
+The first element (process.argv[0]) will be process.execPath or 'node'
+The second element (process.argv[1]) will be the path to the js file
+The remain element (process.argv[2~n]) will be the command line arguments
+```
+#### Example
+```javascript
+console.log(process.argv); //index start with 0
+```
+#### Result
+```
+PS C:\Users\tsuochiayang\Desktop\Oracle\node> node .\test.js 1 2 3
+[ 'C:\\Program Files\\nodejs\\node.exe',
+  'C:\\Users\\tsuochiayang\\Desktop\\Oracle\\node\\test.js',
+  '1',
+  '2',
+  '3' ]
 ```
