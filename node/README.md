@@ -19,7 +19,7 @@ This can also use in printing lines, but it only does a very basic functionality
 #### Example A
 ```javascript
 process.stdout.write("Hello World");
-process.stdout.write("Testing"); //If we don't put break line (\n) at the end, two sentences will be merged into one
+process.stdout.write("Testing"); //If we don't put break line at the end, two sentences will be merged into one
 ```
 #### Output
 ```
@@ -58,4 +58,3 @@ console.log("Hello World\n%s",text); //We can make associations
 Hello World
 Testing
 ```
-###
