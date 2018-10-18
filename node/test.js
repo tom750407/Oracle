@@ -1,4 +1,4 @@
-process.stdout.write("Hello World");
+process.stdout.write("Hello World\n");
 process.stdout.write("Test");
 process.stdout.write("\n");
 console.log("------------------");
