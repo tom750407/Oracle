@@ -2,7 +2,9 @@
 
 ## Exercise 1 - Hello World
 ### Task:
+```
 Write a program that prints the text "HELLO WORLD" to the console (stdout).
+```
 
 ---
 ### Code:
@@ -25,6 +27,8 @@ process.stdout.write("Testing"); //If we don't put break line at the end, two se
 ```
 Hello WorldTestig
 ```
+
+---
 #### console.log
 ```
 On the other hand this can do more.  
@@ -33,23 +37,9 @@ On the other hand this can do more.
 ```javascript
 console.log("Hello World"); 
 console.log("Testing"); //We don't need the break line, because it was already formated
-```
-#### Output
-```
-Hello World
-Testing
-```
-#### Example C
-```javascript
+--------------------------------------------------------------------------------
 console.log("Hello World\n","Testing"); //We can write more than one string
-```
-#### Output
-```
-Hello World
-Testing
-```
-#### Example D
-```javascript
+--------------------------------------------------------------------------------
 var text = "Testing";
 console.log("Hello World\n%s",text); //We can make associations
 ```
