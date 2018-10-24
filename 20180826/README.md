@@ -12,8 +12,8 @@ RedHat鏡像檔案
 
 額外學習
 ---
-鳥哥的 Linux 私房菜
+(暫緩)鳥哥的 Linux 私房菜
 
-Linux指令.xlsx
+(暫緩)Linux指令.xlsx
 
-Linux特殊指令.xlsx
+(暫緩)Linux特殊指令.xlsx
