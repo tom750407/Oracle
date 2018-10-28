@@ -1,0 +1,304 @@
+[oracle@ora12c ~]$ echo $ORACLE_HOME 
+/u01/app/oracle/product/11.2.4/db_1
+[oracle@ora12c ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Oct 20 22:02:37 2018
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> @/u01/app/oracle/product/12.1.2/db_1/rdbms/admin/preupgrd.sql
+
+
+
+
+
+
+Loading Pre-Upgrade Package...
+
+
+***************************************************************************
+Executing Pre-Upgrade Checks in OAEC...
+***************************************************************************
+
+
+      ************************************************************
+
+                   ====>> ERRORS FOUND for OAEC <<====
+
+ The following are *** ERROR LEVEL CONDITIONS *** that must be addressed
+                    prior to attempting your upgrade.
+            Failure to do so will result in a failed upgrade.
+
+           You MUST resolve the above errors prior to upgrade
+
+      ************************************************************
+
+      ************************************************************
+
+               ====>> PRE-UPGRADE RESULTS for OAEC <<====
+
+ACTIONS REQUIRED:
+
+1. Review results of the pre-upgrade checks:
+ /u01/app/oracle/cfgtoollogs/oaec/preupgrade/preupgrade.log
+
+2. Execute in the SOURCE environment BEFORE upgrade:
+ /u01/app/oracle/cfgtoollogs/oaec/preupgrade/preupgrade_fixups.sql
+
+3. Execute in the NEW environment AFTER upgrade:
+ /u01/app/oracle/cfgtoollogs/oaec/preupgrade/postupgrade_fixups.sql
+
+      ************************************************************
+
+***************************************************************************
+Pre-Upgrade Checks in OAEC Completed.
+***************************************************************************
+
+***************************************************************************
+***************************************************************************
+SQL> ALTER SYSTEM SET PROCESSES=300 SCOPE=SPFILE;
+SQL> !emctl stop dbconsole
+Environment variable ORACLE_UNQNAME not defined. Please set ORACLE_UNQNAME to database unique name. 
+
+SQL> !export ORACLE_UNQNAME=oaec
+
+SQL> !emctl stop dbconsole
+Environment variable ORACLE_UNQNAME not defined. Please set ORACLE_UNQNAME to database unique name. 
+
+SET ECHO ON;
+SET SERVEROUTPUT ON;
+@?/rdbms/admin/emremove.sql
+SP2-0310: unable to open file "/u01/app/oracle/product/11.2.4/db_1/rdbms/admin/emremove.sql"
+SQL> !cp /u01/app/oracle/product/12.1.2/db_1/rdbms/admin/emremove.sql /u01/app/oracle/product/11.2.4/db_1/rdbms/admin
+
+SQL> @?/rdbms/admin/emremove.sql
+
+
+-------------------------------------------------------------------------
+@?/olap/admin/catnoamd.sql
+
+
+
+
+------------------------------------------------------------------------
+SQL> EXECUTE dbms_stats.gather_dictionary_stats;
+
+SQL> @/u01/app/oracle/cfgtoollogs/oaec/preupgrade/preupgrade_fixups.sql;
+
+
+
+
+SQL> 
+SQL> ===================================================================================================
+SQL> shutdown immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> startup
+ORACLE instance started.
+Total System Global Area 1870647296 bytes
+Fixed Size                  2254304 bytes
+Variable Size             553650720 bytes
+Database Buffers         1308622848 bytes
+Redo Buffers                6119424 bytes
+Database mounted.
+Database opened.
+SQL> show parameter process
+aq_tm_processes                      integer     1
+cell_offload_processing              boolean     TRUE
+db_writer_processes                  integer     1
+gcs_server_processes                 integer     0
+global_txn_processes                 integer     1
+job_queue_processes                  integer     1000
+log_archive_max_processes            integer     4
+processes                            integer     300
+processor_group_name                 string
+SQL> 
+
+
+[oracle@ora12c ~]$ cd /u01/app/oracle/product/11.2.4/db_1/network/admin/
+[oracle@ora12c admin]$ ls
+samples  shrept.lst
+
+
+[oracle@ora12c admin]$ lsnrctl status oaec
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 20-OCT-2018 22:31:41
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+TNS-01101: Could not find service name oaec
+[oracle@ora12c admin]$ lsnrctl start
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 20-OCT-2018 22:31:47
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+TNS-01106: Listener using listener name LISTENER has already been started
+[oracle@ora12c admin]$ lsnrctl status 
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 20-OCT-2018 22:31:54
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+Start Date                20-OCT-2018 22:02:03
+Uptime                    0 days 0 hr. 29 min. 53 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Log File         /u01/app/oracle/diag/tnslsnr/ora12c/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=ora12c)(PORT=1521)))
+Services Summary...
+Service "oaec" has 1 instance(s).
+  Instance "oaec", status READY, has 1 handler(s) for this service...
+Service "oaecXDB" has 1 instance(s).
+  Instance "oaec", status READY, has 1 handler(s) for this service...
+The command completed successfully
+[oracle@ora12c admin]$ 
+
+[oracle@ora12c admin]$ lsnrctl status
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 20-OCT-2018 22:43:51
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=ora12c)(PORT=1521)))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+Start Date                20-OCT-2018 22:41:06
+Uptime                    0 days 0 hr. 2 min. 44 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/oracle/product/11.2.4/db_1/network/admin/listener.ora
+Listener Log File         /u01/app/oracle/diag/tnslsnr/ora12c/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=ora12c)(PORT=1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=EXTPROC1521)))
+Services Summary...
+Service "oaec" has 1 instance(s).
+  Instance "oaec", status READY, has 1 handler(s) for this service...
+Service "oaecXDB" has 1 instance(s).
+  Instance "oaec", status READY, has 1 handler(s) for this service...
+The command completed successfully
+
+[root@ora12c ~]# service iptables stop
+iptables: Setting chains to policy ACCEPT: filter [  OK  ]
+iptables: Flushing firewall rules: [  OK  ]
+iptables: Unloading modules: [  OK  ]
+[root@ora12c ~]# cat /etc/selinux/config 
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+# SELINUXTYPE= can take one of these two values:
+#     targeted - Targeted processes are protected,
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted 
+
+-----------------------------------------------------------------------------------------------------------
+[root@ora12c ~]# chkconfig iptables off
+[root@ora12c ~]# chkconfig ip6tables off
+
+
+
+更改表空间大小
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/system01.dbf'
+AUTOEXTEND OFF;
+ALTER TABLESPACE SYSTEM ADD DATAFILE '/u01/storage/system02.dbf' SIZE 550M AUTOEXTEND OFF;
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/sysaux01.dbf'
+RESIZE 530M;
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/sysaux01.dbf'
+AUTOEXTEND OFF;
+ALTER TABLESPACE SYSAUX ADD DATAFILE '/u01/storage/sysaux02.dbf' SIZE 900M AUTOEXTEND OFF;
+
+
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/undotbs01.dbf'
+AUTOEXTEND OFF;
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/example01.dbf'
+AUTOEXTEND OFF;
+ALTER DATABASE TEMPFILE '/u01/app/oracle/oradata/oaec/temp01.dbf'
+RESIZE 65M;
+ALTER DATABASE TEMPFILE '/u01/app/oracle/oradata/oaec/temp01.dbf'
+AUTOEXTEND OFF;
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/example01.dbf'
+RESIZE 315M;
+ALTER DATABASE DATAFILE '/u01/app/oracle/oradata/oaec/undotbs01.dbf'
+RESIZE 400M;
+
+DBUA=---------------------------------------------------------------------------
+[oracle@ora12c admin]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Oct 20 23:20:42 2018
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> shutdown immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+[oracle@ora12c admin]$ lsnrctl stop 
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 20-OCT-2018 23:21:08
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=ora12c)(PORT=1521)))
+The command completed successfully
+-----------------------------------------------
+
+[oracle@ora12c ~]$ . profile12c 
+
+
+[oracle@ora12c ~]$ cat profile12c 
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/bin
+
+export PATH
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=$ORACLE_BASE/product/12.1.2/db_1
+#export ORACLE_HOME=$ORACLE_BASE/product/11.2.4/db_1
+export ORACLE_SID=oaec
+export PATH=$ORACLE_HOME/bin:$PATH
+
+dbua
+
+
+
+
+
+
+
+
