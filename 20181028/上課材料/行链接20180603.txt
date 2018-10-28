@@ -1,0 +1,183 @@
+1. 复制employee表，起名为test 
+create table test as select * from hr.employees;
+
+2. 创建索引 
+create index idx_test_id on test(employee_id);
+
+3. 把trace打开，并且只显示trace,不执行语句
+set autotrace traceonly statistics;
+
+4. 强制根据索引查询trace 查看consistent gets的值,越多表示查询的块越多，速度越慢
+select /*+index(test,idx_test_id)*/ * from test where employee_id>0;
+
+5. trace关闭
+set autotrace off
+
+6. 修改数据的数据长度限制
+alter table test modify first_name varchar2(2000);
+
+alter table test modify last_name varchar2(2000);
+
+alter table test modify email varchar2(2000);
+
+alter table test modify phone_number varchar2(2000);
+
+7. 修改数据，填满2000个字节
+update test set first_name=lpad(first_name,2000,'*');
+
+update test set last_name=lpad(last_name,2000,'*');
+
+update test set email=lpad(email,2000,'*');
+
+update test set phone_number=lpad(phone_number,2000,'*');
+
+8. 打开trace
+set autotrace traceonly statistics;
+
+9. 强制根据索引查询trace 查看consistent gets的值,越多表示查询的块越多，速度越慢
+select /*+index(test,idx_test_id)*/ * from test where employee_id>0;
+
+10. 关闭trace 
+set autotrace off;
+
+11. 分析查找test表里面的有发生行链接的行，然后记录到chained_rows里面
+analyze table test list chained rows into chained_rows;
+
+12. 查看chained_rows里面一共有多少行，对应行链接的行数
+select table_name,count(*) from chained_rows group by table_name;
+
+--13. 复制test,命名为test_temp
+--create table test_temp as select * from test where rowid in (select head_rowid from chained_rows);
+
+14. 查看内存中数据库cache_size参数，oracle默认是8k，大于8k的块需要放在其他内存区域，如果对应的块设置为0则会显示错误
+show parameter cache_size;
+ 
+15. 把 db_16k_cache_size这个参数的大小设置为20M
+alter system set db_16k_cache_size=20m;
+
+16. 创建一个新的表空间，设置名字为下，大小为10m；
+create tablespace tbs_16k blocksize 16k datafile '+DATA' size 10m;
+
+17. 把这个test_temp 表转移到新的表空间里面
+alter table test move tablespace tbs_16k;
+
+18. 把chained_rows里面的数据清空
+truncate table chained_rows;
+
+19. 分析test_temp的行链接数量并保存的到chained_rows
+analyze table test list chained rows into chained_rows;
+
+20. 查看chained_rows的行数，结果应为0,表示没有出现行链接
+select table_name,count(*) from chained_rows group by table_name;
+
+21. 重建索引(把一个表转移到新的表空间时候需要新建索引)
+alter index idx_test_id rebuild online;
+
+22. 打开trace
+set autotrace traceonly statistics;
+
+23. 强制根据索引查看trace中的consistent gets,已经大幅度下降查找块的数量
+select /*+index(test,idx_test_id)*/ * from test where employee_id>0;
+
+24. 关闭trace 
+set autotrace off;
+
+
+
+----------------------------
+SQL> set linesize 1000;
+SQL> set autotrace traceonly;
+SQL> select /*+index(test,idx_test_id)*/ * from test where employee_id>0;
+
+已选择107行。
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 1345973065
+
+-------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name        | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |             |   101 |   403K|   108   (0)| 00:00:02 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| TEST        |   101 |   403K|   108   (0)| 00:00:02 |
+|*  2 |   INDEX RANGE SCAN          | IDX_TEST_ID |   101 |       |     1   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("EMPLOYEE_ID">0)
+
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+
+统计信息
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+        116  consistent gets
+          0  physical reads
+          0  redo size
+     866751  bytes sent via SQL*Net to client
+        492  bytes received via SQL*Net from client
+          9  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+        107  rows processed
+SQL>analyze table sys.test compute STATISTICS;
+
+SQL> select /*+index(test,idx_test_id)*/ * from test where employee_id>0;
+
+已选择107行。
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 1345973065
+
+-------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name        | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |             |   107 |   838K|   108   (0)| 00:00:02 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| TEST        |   107 |   838K|   108   (0)| 00:00:02 |
+|*  2 |   INDEX RANGE SCAN          | IDX_TEST_ID |   107 |       |     1   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("EMPLOYEE_ID">0)
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+        116  consistent gets
+          0  physical reads
+          0  redo size
+     866751  bytes sent via SQL*Net to client
+        492  bytes received via SQL*Net from client
+          9  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+        107  rows processed
+
+
+SELECT s.blocks,s.extents from dba_segments s WHERE s.segment_name='TEST';
+
+SELECT t.NUM_ROWS,t.BLOCKS,t.EMPTY_BLOCKS from Dba_Tables t WHERE t.TABLE_NAME='TEST';
+
+
+   	BLOCKS	EXTENTS
+		128            16
+   	NUM_ROWS	BLOCKS	EMPTY_BLOCKS
+	 107		                 114              14
+
+
+select DISTINCT dbms_rowid.rowid_relative_fno(rowid) R_FNO,
+dbms_rowid.rowid_block_number(rowid) b_no ,employee_id
+from sys.test  order by 1,2;

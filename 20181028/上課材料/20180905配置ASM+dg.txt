@@ -1,0 +1,492 @@
+本文约定：
+1.备库已经事先安装了Oracle数据库软件
+2.备库从安装grid infrastructure开始，
+3.主库为文件系统，备库为ASM，存放数据库文件
+--创建用户和用户组
+groupadd -g 1000 oinstall  
+groupadd -g 1031 dba  
+
+groupadd -g 1032 asmdba  
+useradd -u 1100 -g oinstall -G asmdba grid 
+useradd -u 1101 -g oinstall -G dba,asmdba oracle  
+mkdir -p /u01/app/grid_base  
+mkdir -p /u01/app/grid_home   
+chown -R grid:oinstall /u01/app/grid_base  
+chown -R grid:oinstall /u01/app/grid_home  
+chmod -R 775 /u01/app/grid_base  
+chmod -R 775 /u01/app/grid_home  
+
+usermod -G dba,asmdba oracle
+mkdir -p /u01/app/oracle/product/12.2.0 
+chown -R oracle:oinstall /u01/app/oracle  
+chmod -R 775 /u01/app/oracle  
+
+--为grid用户设置环境变量
+vi /home/grid/.bash_profile
+新增下列内容：
+export ORACLE_SID=+ASM1
+export ORACLE_BASE=/u01/app/grid_base
+export ORACLE_HOME=$ORACLE_BASE/grid_home
+export GRID_HOME=$ORACLE_HOME
+export PATH=/usr/sbin:$PATH:$ORACLE_HOME/bin
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+umask 022
+
+
+fdisk /dev/sdc
+fdisk /dev/sdd
+
+cd /etc/udev/rules.d
+然后创建一个规则文件，后缀一定要是.rules：
+vi 99-ASM.rules
+写入如下内容：
+
+ACTION=="add", KERNEL=="sdc1", RUN+="/bin/raw /dev/raw/raw1 %N"
+ACTION=="add", KERNEL=="sdd1", RUN+="/bin/raw /dev/raw/raw2 %N"
+KERNEL=="raw[1-2]*", OWNER="grid", GROUP="asmdba", MODE="775"
+
+[root@oaecdg rules.d]# start_udev
+Starting udev: udevd[5968]: GOTO 'pulseaudio_check_usb' has no matching label in: '/lib/udev/rules.d/90-pulseaudio.rules'
+                                                           [  OK  ]
+[root@oaecdg rules.d]# raw
+raw       raw2tiff  
+[root@oaecdg rules.d]# raw -qa
+/dev/raw/raw1:	bound to major 8, minor 33
+/dev/raw/raw2:	bound to major 8, minor 49
+
+xhost +
+su - grid
+cd $GRID_HOME
+ ./gridSetup.sh
+
+asmca
+
+配置DG备库参数文件
+*.audit_file_dest='/u01/app/oracle/admin/oaec/adump'
+*.audit_trail='DB'
+*.compatible='12.2.0.1.0'
+*.control_files='+DATA'
+*.db_block_size=8192
+*.db_domain='hwua.com'
+*.db_file_name_convert='/u01/app/oracle/oradata/oaec','+DATA'
+*.db_name='oaec'
+*.db_recovery_file_dest_size=4781506560
+*.db_recovery_file_dest='+FRA'
+*.db_unique_name='oaecdg'
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=oaecXDB)'
+*.enable_pluggable_database=TRUE
+*.fal_server='oaec'
+*.local_listener='LISTENER_OAECDG'
+*.log_archive_config='dg_config=(oaec,oaecdg)'
+*.log_archive_dest_1='location=+FRA'
+*.log_archive_dest_2='service=oaec valid_for=(online_logfiles,primary_role) db_unique_name=oaec'
+*.log_archive_dest_state_1='ENABLE'
+*.log_archive_dest_state_2='ENABLE'
+*.log_file_name_convert='/u01/app/oracle/oradata/oaec','+DATA'
+*.memory_target=3388997632
+*.nls_language='SIMPLIFIED CHINESE'
+*.nls_territory='CHINA'
+*.open_cursors=300
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.standby_file_management='auto'
+*.undo_tablespace='UNDOTBS1'
+
+
+export ORACLE_SID=+ASM
+asmcmd –p
+ls
+cd DATA
+mkdir oaecdg
+还可以
+alter diskgroup data add directory '+data/oaecdg';
+创建spfile
+export ORACLE_SID=oaecdg
+sqlplus / as sysdba
+create spfile='+DATA/oaecdg/spfileoaecdg.ora' from pfile='/u01/app/oracle/product/12.2.0/dbs/initoaecdg.ora';
+
+[oracle@oaecdg dbs]$ echo $ORACLE_SID
+oaecdg
+[oracle@oaecdg dbs]$ sqlplus / as sysdba
+
+SQL*Plus: Release 12.2.0.1.0 Production on 星期三 9月 5 16:15:00 2018
+
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+
+已连接到空闲例程。
+
+SQL> create spfile='+DATA/oaecdg/spfileoaecdg.ora' from pfile='/u01/app/oracle/product/12.2.0/dbs/initoaecdg.ora';
+
+File created.
+
+echo "spfile='+DATA/oaecdg/spfileoaecdg.ora'" > initoaecdg.ora
+
+[oracle@oaecdg dbs]$ cp  initoaecdg.ora initoaecdg.ora.bak
+[oracle@oaecdg dbs]$ vi initoaecdg.ora
+spfile='+DATA/oaecdg/spfileoaecdg.ora'
+
+[oracle@oaecdg dbs]$ sqlplus / as sysdba
+已连接到空闲例程。
+
+SQL> startup nomount;
+ORACLE 例程已经启动。
+
+Total System Global Area 3388997632 bytes
+Fixed Size                  8798408 bytes
+Variable Size            1946160952 bytes
+Database Buffers         1426063360 bytes
+Redo Buffers                7974912 bytes
+SQL> show parameter spfile;
+
+NAME        TYPE      VALUE
+----------- --------- ------------------------ 
+spfile      string    +DATA/oaecdg/spfileoaecdg.ora
+
+
+[oracle@oaecdg dbs]$ sqlplus system/oracle@oaecdg
+
+SQL*Plus: Release 12.2.0.1.0 Production on 星期三 9月 5 16:43:14 2018
+
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+
+ERROR:
+ORA-01033: ORACLE ????????
+进程 ID: 0
+会话 ID: 0 序列号: 0
+
+--------------------------------这个问题解决：
+重新生成密码文件，然后sys as sysdba登录
+[oracle@oaec dbs]$ scp orapwoaec oracle@192.168.5.131:`pwd`/orapwoaecdg
+[oracle@oaecdg dbs]$ sqlplus sys/ora_1234@oaecdg as sysdba
+
+SQL*Plus: Release 12.2.0.1.0 Production on 星期四 9月 6 11:15:43 2018
+
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+
+上次成功登录时间: 星期四 9月  06 2018 11:13:51 +08:00
+
+连接到: 
+Oracle Database 12c
+----------------------------------------------------------DBCA遇到错误
+dbca CRS-2674: Start of 'ora.orcl.db' on 'rac1' failed ORA-01017: invalid username/password; log
+--------------解决
+[root@oaecdg ~]# id grid
+uid=1100(grid) gid=501(oinstall) 组=501(oinstall),1032(asmdba)
+[root@oaecdg ~]# usermod -G oinstall,asmdba,dba grid
+[root@oaecdg ~]# id grid
+uid=1100(grid) gid=501(oinstall) 组=501(oinstall),500(dba),1032(asmdba)
+[root@oaecdg ~]# su - oracle 
+[oracle@oaecdg ~]$ relink all
+writing relink log to: /u01/app/oracle/product/12.2.0/install/relink.log
+
+--复制数据库
+备份主库，复制rmam备份到备库，相同目录
+duplicate target database for standby DORECOVER
+spfile  
+set db_unique_name='oaecdg'
+set control_files='+DATA/oaecdg/controlfile/current.256.869873351'
+set db_file_name_convert='/u01/app/oracle/oradata/oaec','+DATA'
+set log_file_name_convert='/u01/app/oracle/oradata/oaec','+FRA'
+set log_archive_config='DG_CONFIG=(oaec,oaecdg)'
+set log_archive_dest_1='LOCATION=+FRA VALID_FOR=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=oaecdg'
+set log_archive_dest_2='SERVICE=oaec ARCH VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=oaec'
+set fal_client='oaecdg'
+set fal_server='oaec'
+set standby_file_management='AUTO'
+nofilenamecheck;
+----------------------
+DUPLICATE TARGET DATABASE FOR STANDBY DORECOVER
+SPFILE 
+SET "db_unique_name"="oaecdg" COMMENT ''Is a duplicate'' 
+SET LOG_ARCHIVE_DEST_2="service=oaec ASYNC REGISTER VALID_FOR=(online_logfile,primary_role) DB_UNIQUE_NAME=oaec"
+SET FAL_SERVER="oaec" COMMENT "Is primary"
+NOFILENAMECHECK;
+
+SERVICE=oaecdg LGWR SYNC AFFIRM VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=oaecdg
+
+--执行复制操作 
+rman target sys/ora_1234@oaec  auxiliary sys/ora_1234@oaecdg cmdfile=duplicate_act_standby.rcv log=rman.log
+duplicate target database for standby DORECOVER nofilenamecheck;
+
+
+
+[grid@oaecdg ~]$ asmcmd
+ASMCMD> cd data
+ASMCMD> ls
+ASM/
+oaec/
+oaecdg/
+orapwasm
+ASMCMD> cd oaec
+ASMCMD> ls
+CONTROLFILE/
+DATAFILE/
+ONLINELOG/
+PARAMETERFILE/
+TEMPFILE/
+ASMCMD> cd controlfile
+ASMCMD> ls
+Current.268.986071141
+ASMCMD> ls PARAMETERFILE
+spfile.270.986071769
+ASMCMD> ls DATAFILE
+SYSAUX.264.986071063
+SYSTEM.257.986071019
+UNDOTBS1.258.986071089
+USERS.260.986071091
+ASMCMD> ls ONLINELOG
+group_1.263.986071155
+group_2.262.986071155
+group_3.259.986071155
+ASMCMD> ls TEMPFILE
+TEMP.265.986071229
+-----------------------------------
+当前样例库参数文件
+
+*.audit_file_dest='/u01/app/oracle/admin/oaec/adump'
+*.audit_trail='db'
+*.compatible='12.2.0'
+*.control_files='+DATA/OAEC/CONTROLFILE/current.268.986071141','+FRA/OAEC/CONTROLFILE/current.256.986071145'
+*.db_block_size=8192
+*.db_create_file_dest='+DATA'
+*.db_domain='hwua.com'
+*.db_name='oaec'
+*.db_recovery_file_dest='+FRA'
+*.db_recovery_file_dest_size=9040m
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=oaecdgXDB)'
+*.enable_pluggable_database=true
+*.local_listener='LISTENER_OAECDG'
+*.log_archive_format='%t_%s_%r.dbf'
+*.nls_language='SIMPLIFIED CHINESE'
+*.nls_territory='CHINA'
+*.open_cursors=300
+*.pga_aggregate_target=584m
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sga_target=1750m
+*.undo_tablespace='UNDOTBS1'
+
+修改
+*.audit_file_dest='/u01/app/oracle/admin/oaec/adump'
+*.audit_trail='DB'
+*.compatible='12.2.0.1.0'
+*.control_files='+DATA/OAEC/CONTROLFILE/current.268.986071141','+FRA/OAEC/CONTROLFILE/current.256.986071145'
+*.db_block_size=8192
+*.db_domain='hwua.com'
+*.db_file_name_convert='/u01/app/oracle/oradata/oaec','+DATA'
+*.db_name='oaec'
+*.db_recovery_file_dest_size=9040m
+*.db_recovery_file_dest='+FRA'
+*.db_unique_name='oaecdg'
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=oaecXDB)'
+*.enable_pluggable_database=TRUE
+*.fal_server='oaec'
+*.local_listener='LISTENER_OAECDG'
+*.log_archive_config='dg_config=(oaec,oaecdg)'
+*.log_archive_dest_1='location=+FRA'
+*.log_archive_dest_2='service=oaec valid_for=(online_logfiles,primary_role) db_unique_name=oaec'
+*.log_archive_dest_state_1='ENABLE'
+*.log_archive_dest_state_2='ENABLE'
+*.log_file_name_convert='/u01/app/oracle/oradata/oaec','+DATA'
+*.memory_target=3388997632
+*.nls_language='SIMPLIFIED CHINESE'
+*.nls_territory='CHINA'
+*.open_cursors=300
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.standby_file_management='auto'
+*.undo_tablespace='UNDOTBS1'
+--------------------------------
+SQL> create spfile='+DATA/oaecdg/PARAMETERFILE/spfileoaecdg.ora' from pfile='/u01/app/oracle/product/12.2.0/dbs/initoaecdg.ora';
+
+File created.
+
+echo "spfile='+DATA/oaecdg/PARAMETERFILE/spfileoaecdg.ora'" > initoaecdg.ora
+
+[oracle@oaecdg dbs]$ cp  initoaecdg.ora initoaecdg.ora.bak
+[oracle@oaecdg dbs]$ vi initoaecdg.ora
+spfile='+DATA/oaecdg/spfileoaecdg.ora'
+
+[oracle@oaecdg dbs]$ sqlplus / as sysdba
+已连接到空闲例程。
+
+SQL> startup nomount;
+ORACLE 例程已经启动。
+
+Total System Global Area 3388997632 bytes
+Fixed Size                  8798408 bytes
+Variable Size            1946160952 bytes
+Database Buffers         1426063360 bytes
+Redo Buffers                7974912 bytes
+SQL> show parameter spfile;
+
+grid
+srvctl add listener -l LISTENER -o $ORACLE_HOME -p 1521 -k 1
+
+-k 填入方才获得的network number，-p填入端口号，-l填入监听名，-o 填入GI HOME路径
+
+[grid@vrh1 admin]$ srvctl start listener -l NEW_MACLEAN_LISTENER
+
+
+ORA-01034: ORACLE not available
+ORA-27101: shared memory realm does not exist
+
+
+[grid@oaecdg admin]$ crsctl status res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details       
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.FRA.dg
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.asm
+               ONLINE  ONLINE       oaecdg                   Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      oaecdg                   STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.driver.afd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.evmd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.oaec.db
+      1        ONLINE  OFFLINE                               Instance Shutdown,ST
+                                                             ABLE
+--------------------------------------------------------------------------------
+[grid@oaecdg admin]$ srvctl start database -d oaec
+PRCR-1079 : 无法启动资源 ora.oaec.db
+CRS-5017: The resource action "ora.oaec.db start" encountered the following error: 
+ORA-00205: ?????????, ??????, ???????
+. For details refer to "(:CLSN00107:)" in "/u01/app/grid_base/diag/crs/oaecdg/crs/trace/ohasd_oraagent_grid.trc".
+
+CRS-2674: Start of 'ora.oaec.db' on 'oaecdg' failed
+
+srvctl add database -db oaecdg -oraclehome /u01/app/oracle/product/12.2.0
+
+[oracle@oaecdg ~]$ srvctl add database -db oaecdg -oraclehome /u01/app/oracle/product/12.2.0
+[oracle@oaecdg ~]$ srvctl add database -db oaec -oraclehome /u01/app/oracle/product/12.2.0
+PRCD-1000 : 数据库 oaec 已存在
+PRCR-1086 : 资源 ora.oaec.db 已注册
+
+srvctl start database -db oaec -startoption nomount
+srvctl stop database -db oaec -stopoption immidiate
+srvctl status database -db oaec
+
+从 Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production 断开
+[oracle@oaecdg ~]$ srvctl start database -db oaec -startoption nomount
+[oracle@oaecdg ~]$ srvctl status database -db oaec
+
+[grid@oaecdg ~]$ crsctl status res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details       
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.FRA.dg
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.asm
+               ONLINE  ONLINE       oaecdg                   Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      oaecdg                   STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.driver.afd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.evmd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.oaec.db
+      1        ONLINE  INTERMEDIATE oaecdg                   Dismounted,HOME=/u01
+                                                             /app/oracle/product/
+                                                             12.2.0,STABLE
+ora.oaecdg.db
+      1        OFFLINE OFFLINE                               STABLE
+--------------------------------------------------------------------------------
+[oracle@oaecdg ~]$ srvctl remove database -db oaecdg 
+是否删除数据库 oaecdg? (y/[n]) y
+[grid@oaecdg ~]$ crsctl status res -t
+
+srvctl add listener -listener listener -oraclehome /u01/app/grid_base/grid_home
+srvctl add listener -listener listener -oraclehome /u01/app/oracle/product/12.2.0
+srvctl config listener -listener listener
+srvctl stop listener -listener listener
+srvctl start listener -listener listener
+
+[grid@oaecdg admin]$ lsnrctl stop
+
+LSNRCTL for Linux: Version 12.2.0.1.0 - Production on 06-SEP-2018 10:00:40
+
+Copyright (c) 1991, 2016, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=oaecdg.hwua.com)(PORT=1521)))
+The command completed successfully
+[grid@oaecdg admin]$ srvctl add listener -listener listener -oraclehome /u01/app/grid_base/grid_home
+[grid@oaecdg admin]$ srvctl config listener -listener listener
+名称: LISTENER
+类型: Database Listener
+主目录: /u01/app/grid_base/grid_home
+端点: TCP:1521
+监听程序已启用。
+[grid@oaecdg admin]$ srvctl start listener -listener listener
+[grid@oaecdg admin]$ crsctl status res -t
+--------------------------------------------------------------------------------
+Name           Target  State        Server                   State details       
+--------------------------------------------------------------------------------
+Local Resources
+--------------------------------------------------------------------------------
+ora.DATA.dg
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.FRA.dg
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.LISTENER.lsnr
+               ONLINE  ONLINE       oaecdg                   STABLE
+ora.asm
+               ONLINE  ONLINE       oaecdg                   Started,STABLE
+ora.ons
+               OFFLINE OFFLINE      oaecdg                   STABLE
+--------------------------------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------------------------------
+ora.cssd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE                               STABLE
+ora.driver.afd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.evmd
+      1        ONLINE  ONLINE       oaecdg                   STABLE
+ora.oaec.db
+      1        ONLINE  INTERMEDIATE oaecdg                   Dismounted,HOME=/u01
+                                                             /app/oracle/product/
+                                                             12.2.0,STABLE
+--------------------------------------------------------------------------------
+[grid@oaecdg admin]$ 
+
+SID_LIST_LISTENER  = 
+   (SID_LIST  = 
+     (SID_DESC = 
+       (GLOBAL_DBNAME  =  oaecdg  ) 
+       (ORACLE_HOME  =  /u01/app/oracle/product/12.2.0) 
+       (SID_NAME =oaecdg) 
+     )
+   ) 
+
+startup nomount pfile='/home/oracle/initoaecdg.ora'
