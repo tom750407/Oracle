@@ -1,0 +1,142 @@
+#!/bin/bash
+
+#this script is written for generating AWR html report by mingshuo on Thu Jul 26 16:00:09 CST 2018,
+#adjusting to linux only.Both 11g and 12c can be used.
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#The sctipt depends on bc linux command ,please check whether or not already is installed.
+#method of installation: yum install bc -y
+#time parameter format:yyyymmddhi24min,for example 201807252330.
+
+#When you input time parameters,you'd better be aware of interval time between two snaps.The precision of the script is one hour.It amounts to saying that if two snap id exactly exist when you input time range,the sample interval would be accurate.if not,time interval would extends.For example:
+#	
+#	my database interval is 15 minutes.If you input  201807252330 and 201807252330,
+#		201807252330 would turn into 201807252300;
+#		201807252330 would turn into 201807260000;
+#		
+#So it highly recommand that you input accurate time parameters when you use this scripts,which can avoid wrong results or suspension.
+
+#usage :
+#sh auto_awr_html_report_v1.sh  201807252110 201807252330 
+#or ./auto_awr_html_report_v1.sh  201807252110 201807252330
+#you will get AWR html report on /tmp,like this :awr_2018_7_26.html
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+source /home/oracle/.bash_profile
+
+#get snap id
+sqlplus -S / as sysdba <<EOF
+alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
+set pagesize 2000
+set head off
+spool /tmp/dbsnap.txt
+select to_char(s.startup_time,'yyyymmdd hh24:mi:ss')  instart_fmt
+     , s.snap_id                                         snap_id
+     , to_char(s.end_interval_time,'yyyymmdd-hh24:mi') snapdat
+  from dba_hist_snapshot s
+     , dba_hist_database_instance di
+ where di.dbid             = s.dbid
+   and di.instance_number  = s.instance_number
+   and di.startup_time     = s.startup_time
+ order by db_name, instance_name, snap_id;
+spool off
+exit
+EOF
+
+
+#dispose the input date parameters
+sqlplus -S / as sysdba <<EOF
+alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
+set head off
+spool /tmp/inputdatetime.txt
+select to_char(to_date('$1'),'yyyymmdd-hh24:mi') from dual;
+select to_char(to_date('$2'),'yyyymmdd-hh24:mi') from dual;
+spool off
+exit
+EOF
+
+snaptime1=$(more /tmp/inputdatetime.txt |grep -v '^$'|sed 's/[ \t]*$//g'|sed -n '1p')
+snaptime2=$(more /tmp/inputdatetime.txt |grep -v '^$'|sed 's/[ \t]*$//g'|sed -n '2p')
+out1=$(sed -n "/\<$snaptime1\>/p" /tmp/dbsnap.txt)
+out2=$(sed -n "/\<$snaptime2\>/p" /tmp/dbsnap.txt)
+
+
+if [ ! "$out1" ] ; then
+        snaptimep1=$(echo $snaptime1|gawk -F':' '{print $1":"}')
+        snaptimep2=00
+        snaptime1=$snaptimep1$snaptimep2
+        out1=$(sed -n "/\<$snaptime1\>/p" /tmp/dbsnap.txt)
+        snapid1=$(echo $out1|gawk -F' ' '{print $3}')
+else
+        snapid1=$(echo $out1|gawk -F' ' '{print $3}')
+fi
+
+if [ ! "$out2" ] ; then
+		snaptimeday=$(echo $snaptime2|gawk -F'-' '{print $1}')
+        snaptimep1=$(echo $snaptime2|gawk -F'-' '{print $2}'|gawk -F':' '{print $1}')
+        snaptimep2=$(echo $snaptime2|gawk -F':' '{print $2}')
+		if [ "$snaptimep1" -ge "23" ] ; then
+			snaptimeday=$(echo "scale=1;$snaptimeday+1"|bc)
+			snaptimep1=00
+			snaptimep2=00
+			snaptime2=$snaptimeday-$snaptimep1:$snaptimep2
+		else
+			snaptimep1=$(echo "scale=1;$snaptimep1+1"|bc)
+			snaptimep2=00
+			snaptime2=$snaptimeday-$snaptimep1:$snaptimep2
+		fi
+        out2=$(sed -n "/\<$snaptime2\>/p" /tmp/dbsnap.txt)
+        snapid2=$(echo $out2|gawk -F' ' '{print $3}')
+else
+        snapid2=$(echo $out2|gawk -F' ' '{print $3}')
+fi
+
+
+dbstart1=$(sed -n "/\<$snapid1\>/p" /tmp/dbsnap.txt|gawk -F' ' '{print $1,$2}')
+dbstart2=$(sed -n "/\<$snapid2\>/p" /tmp/dbsnap.txt|gawk -F' ' '{print $1,$2}')
+
+
+#if exists gap among your input time,it could not generate AWR report.
+if [ "$dbstart1" == "$dbstart2" ] ; then
+       echo nice>>/dev/null
+else
+       echo "There is gap between $snaptime1 and $snaptime2"
+       echo "please run the script again and input right time again!"
+       exit
+fi
+
+#get dbid and instance number
+sqlplus -S / as sysdba <<EOF
+set pages 0
+set feedback off
+set head off
+spool /tmp/dbidinst.txt
+select dbid from v\$database;
+select instance_number from v\$instance;
+spool off
+exit
+EOF
+
+#generate file of parameters
+sed -i '/SQL/d' /tmp/dbidinst.txt 
+sed -i 's/^[ \t]*//g' /tmp/dbidinst.txt 
+sed -i 's/[ \t]*$//g' /tmp/dbidinst.txt 
+echo "$snapid1" >> /tmp/dbidinst.txt
+echo "$snapid2" >> /tmp/dbidinst.txt
+echo 0 >> /tmp/dbidinst.txt
+gawk 'BEGIN{ORS=","}{print $0}' /tmp/dbidinst.txt > /tmp/awr_input.lst
+sed -i 's/,$//g' /tmp/awr_input.lst
+
+
+#generate AWR html report
+datestring=$(date -d today +"%Y_%-m_%-d_%H_%M")
+sqlplus -S / as sysdba <<EOF
+set pages 0
+set linesize 2000
+col output format a300
+spool /tmp/awr_$datestring.html
+select output from table(dbms_workload_repository.awr_report_html(`cat /tmp/awr_input.lst`));
+spool off
+exit
+EOF
