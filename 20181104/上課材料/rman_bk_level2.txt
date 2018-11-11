@@ -1,0 +1,27 @@
+#!/bin/sh
+#set env
+export ORACLE_HOME=/oracle/app/oracle/product/11.2.0/db_1
+export ORACLE_SID=qnbss
+export NLS_LANG="SIMPLIFIED CHINESE_CHINA.ZHS16GBK"
+export PATH=/usr/sbin:$ORACLE_HOME/bin:$ORACLE_HOME/jdk/bin:$PATH
+echo "-----------------------------start_lev2-----------------------------";date
+$ORACLE_HOME/bin/rman <<EOF
+connect target
+run{
+ALLOCATE CHANNEL node_c1 DEVICE TYPE DISK ;
+ALLOCATE CHANNEL node_c2 DEVICE TYPE DISK ;
+BACKUP AS COMPRESSED BACKUPSET incremental level 2  DATABASE TAG = lev2DATA format='/san_data/rmanbak/lev2_%s_%p_%T';
+ BACKUP CURRENT CONTROLFILE TAG = lev2CF1 FORMAT '/san_data/rmanbak/lev2cf_%t_%s_p%p' ;
+ sql "alter system archive log current";
+backup archivelog all delete input TAG = lev2ARC format='/san_data/rmanbak/lev2ARC_%s_%p_%T' filesperset 20;
+release channel node_c1;
+release channel node_c2;
+}
+allocate channel for maintenance device type disk;
+delete noprompt obsolete;
+crosscheck backup;
+delete noprompt expired backup;
+release channel;
+exit;
+EOF
+echo "------------------------------end_lev2------------------------------";date
